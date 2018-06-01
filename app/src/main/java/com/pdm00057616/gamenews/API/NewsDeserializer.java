@@ -21,6 +21,7 @@ public class NewsDeserializer implements JsonDeserializer<New> {
         news.setBody(newsJsonObject.get("body").getAsString());
         news.setGame(newsJsonObject.get("game").getAsString());
         news.setCreated_date(newsJsonObject.get("created_date").getAsString());
+        news.setCover_image(newsJsonObject.get("coverImage").getAsString());
         news.set__v(newsJsonObject.get("__v").getAsInt());
         return news;
 
