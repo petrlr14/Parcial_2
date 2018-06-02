@@ -1,7 +1,5 @@
-package com.pdm00057616.gamenews;
+package com.pdm00057616.gamenews.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,19 +8,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.pdm00057616.gamenews.API.TokenDeserializer;
-import com.pdm00057616.gamenews.API.GameNewsAPI;
+import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.fragments.AllViewFragment;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         navigationView.setNavigationItemSelectedListener((item) -> {
                     Fragment fragment;
-                    switch (item.getItemId()){
+                    switch (item.getItemId()) {
                         default:
-                            fragment=new AllViewFragment();
+                            fragment = new AllViewFragment();
                             break;
                     }
                     getSupportFragmentManager().beginTransaction()
