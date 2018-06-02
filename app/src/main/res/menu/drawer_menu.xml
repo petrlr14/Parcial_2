@@ -3,35 +3,35 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="news_section"
+            android:id="@+id/news_section"
             android:title="@string/news_menu" />
         <item
-            android:id="games_section"
+            android:id="@+id/games_section"
             android:title="@string/games_menu">
             <menu>
                 <group>
                     <item
-                        android:id="game1_section"
+                        android:id="@+id/game1_section"
                         android:title="@string/league_of_legends_menu" />
                     <item
-                        android:id="game2_section"
+                        android:id="@+id/game2_section"
                         android:title="@string/dota_menu" />
                     <item
-                        android:id="game3_section"
+                        android:id="@+id/game3_section"
                         android:title="@string/csgo_menu" />
                 </group>
             </menu>
         </item>
         <item
-            android:id="extra_section"
+            android:id="@+id/extra_section"
             android:title="">
             <menu>
                 <group>
                     <item
-                        android:id="setting_section"
+                        android:id="@+id/setting_section"
                         android:title="@string/settings_menu" />
                     <item
-                        android:id="fav_section"
+                        android:id="@+id/fav_section"
                         android:title="@string/favorites_menu" />
                 </group>
             </menu>
