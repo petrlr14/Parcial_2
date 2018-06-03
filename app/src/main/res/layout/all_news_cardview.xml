@@ -16,8 +16,7 @@
             android:id="@+id/news_image"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:contentDescription="@string/news_image_description"
-            android:scaleType="centerCrop" />
+            android:contentDescription="@string/news_image_description" />
 
         <LinearLayout
             android:id="@+id/new_description_title"
