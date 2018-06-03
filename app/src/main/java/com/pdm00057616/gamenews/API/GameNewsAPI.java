@@ -6,24 +6,22 @@ import com.pdm00057616.gamenews.models.User;
 import java.util.List;
 
 import io.reactivex.Single;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface GameNewsAPI {
 
-    public static final String END_POINT="http://gamenewsuca.herokuapp.com";
+    static final String END_POINT = "http://gamenewsuca.herokuapp.com";
+
     @GET("/news")
-    Call<List<New>> getNews();
+    Single<List<New>> getNews(@Header("Authorization")String auth);
 
     @GET("/users")
-    Call<List<User>> getUser();
+    Single<List<User>> getUser();
 
     @FormUrlEncoded
     @POST("/login")
