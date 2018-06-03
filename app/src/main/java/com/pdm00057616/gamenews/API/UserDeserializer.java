@@ -27,7 +27,7 @@ public class UserDeserializer implements JsonDeserializer<User>{
         JsonElement newsJsonElement=userObject.get("favoriteNews");
         JsonArray newsJsonArray=newsJsonElement.getAsJsonArray();
         user.setFavNews(getFavNews(newsJsonArray));
-        return null;
+        return user;
     }
 
     private List<New> getFavNews(JsonArray array){

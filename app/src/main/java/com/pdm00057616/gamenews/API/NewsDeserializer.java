@@ -14,7 +14,6 @@ public class NewsDeserializer implements JsonDeserializer<New> {
     @Override
     public New deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         New news = new New();
-
         JsonObject newsJsonObject = json.getAsJsonObject();
         news.set_id(newsJsonObject.get("_id").getAsString());
         news.setTitle(newsJsonObject.get("title").getAsString());
