@@ -18,10 +18,10 @@ public interface GameNewsAPI {
     static final String END_POINT = "http://gamenewsuca.herokuapp.com";
 
     @GET("/news")
-    Single<List<New>> getNews(@Header("Authorization")String auth);
+    Call<List<New>> getNews(@Header("Authorization")String auth);
 
     @GET("/users")
-    Single<List<User>> getUser();
+    Call<List<User>> getUser();
 
     @FormUrlEncoded
     @POST("/login")
