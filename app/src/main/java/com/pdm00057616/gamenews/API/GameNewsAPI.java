@@ -18,6 +18,7 @@ import retrofit2.http.POST;
 
 public interface GameNewsAPI {
 
+    public static final String END_POINT="http://gamenewsuca.herokuapp.com";
     @GET("/news")
     Call<List<New>> getNews();
 
