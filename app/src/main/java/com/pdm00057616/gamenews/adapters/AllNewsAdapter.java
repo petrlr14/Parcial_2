@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,9 +26,8 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
     public AllNewsAdapter(Context context) {
         this.context = context;
         requestOptions = new RequestOptions()
-                .centerCrop()
                 .error(R.drawable.error_loading)
-                .priority(Priority.HIGH)
+                .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
     }
 
@@ -50,7 +47,7 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return newList==null?0:newList.size();
+        return newList == null ? 0 : newList.size();
     }
 
     public void setNewList(List<New> newList) {
@@ -66,13 +63,15 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
             GlideApp.with(context)
                     .load(news.getCover_image())
                     .apply(requestOptions)
-                    .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(holder.imageView);
+                    .into(holder.imageView)
+                    .clearOnDetach();
         } else {
-            Glide.with(context)
+            GlideApp.with(context)
                     .load(R.drawable.error_loading)
-                    .into(holder.imageView);
+                    .centerCrop()
+                    .into(holder.imageView)
+                    .clearOnDetach();
         }
     }
 
@@ -84,7 +83,7 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
             super(itemView);
             imageView = itemView.findViewById(R.id.news_image);
             title = itemView.findViewById(R.id.new_title);
-            description=itemView.findViewById(R.id.new_description);
+            description = itemView.findViewById(R.id.new_description);
         }
     }
 }

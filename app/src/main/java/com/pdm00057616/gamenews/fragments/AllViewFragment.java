@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.pdm00057616.gamenews.API.GameNewsAPI;
@@ -96,7 +97,11 @@ public class AllViewFragment extends Fragment {
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                adapter.setNewList(response.body());
+                if (response.isSuccessful())
+                    adapter.setNewList(response.body());
+                else
+                    Toast.makeText(getContext(), "No se pudo wey", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
