@@ -13,13 +13,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.pdm00057616.gamenews.R;
+import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.models.New;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
 
-    private List<New> newList;
+    private List<NewEntity> newList;
     private Context context;
     private RequestOptions requestOptions;
 
@@ -40,7 +42,7 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        New newAux = newList.get(holder.getAdapterPosition());
+        NewEntity newAux = newList.get(holder.getAdapterPosition());
         bindViews(newAux, holder);
 
     }
@@ -50,28 +52,31 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
         return newList == null ? 0 : newList.size();
     }
 
-    public void setNewList(List<New> newList) {
+    public void setNewList(List<NewEntity> newList) {
         this.newList = newList;
         notifyDataSetChanged();
+        System.out.println(newList.size());
     }
 
-    private void bindViews(New news, ViewHolder holder) {
+    private void bindViews(NewEntity news, ViewHolder holder) {
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getDescription());
-        if (!(news.getCover_image() == null) &&
-                news.getCover_image().length() > 20) {
-            GlideApp.with(context)
-                    .load(news.getCover_image())
+        if (!(news.getCoverImage() == null) &&
+                news.getCoverImage().length() > 20) {
+            /*GlideApp.with(context)
+                    .load(news.getCoverImage())
                     .apply(requestOptions)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.imageView)
-                    .clearOnDetach();
+                    .clearOnDetach();*/
+            Picasso.get().load(news.getCoverImage()).error(R.drawable.error_loading).into(holder.imageView);
         } else {
-            GlideApp.with(context)
+            /*GlideApp.with(context)
                     .load(R.drawable.error_loading)
                     .centerCrop()
                     .into(holder.imageView)
-                    .clearOnDetach();
+                    .clearOnDetach();*/
+            Picasso.get().load(R.drawable.error_loading).into(holder.imageView);
         }
     }
 
