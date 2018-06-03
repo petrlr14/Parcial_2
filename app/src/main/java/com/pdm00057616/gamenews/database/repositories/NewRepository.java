@@ -10,6 +10,7 @@ import com.pdm00057616.gamenews.API.GameNewsAPI;
 import com.pdm00057616.gamenews.API.NewsDeserializer;
 import com.pdm00057616.gamenews.database.AppDB;
 import com.pdm00057616.gamenews.database.daos.NewDao;
+import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.models.New;
 
 import java.util.List;
@@ -26,30 +27,42 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class NewRepository {
 
     private NewDao newDao;
-    private LiveData<List<New>> allNews;
     private GameNewsAPI gameNewsAPI;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public NewRepository(Application application) {
         AppDB db = AppDB.getInstance(application);
         newDao = db.newDao();
-        allNews = newDao.getAllNews();
-        createAPIClient();
+//        createAPIClient();
     }
 
-    LiveData<List<New>> getAllNews(String auth) {
-        compositeDisposable.add(gameNewsAPI.getNews("Bearerd "+auth)
+    public LiveData<List<NewEntity>> getAllNews(/*String auth*/) {
+    /*    compositeDisposable.add(gameNewsAPI.getNews("Bearerd "+auth)
         .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
-        subscribeWith(getNewsObserver()));
-
-        return allNews;
+        subscribeWith(getNewsObserver()));*/
+        return newDao.getAllNews();
     }
 
-    private void insert(New news){
+    public void insert(NewEntity news){
         new insertAsyncTask(newDao).execute(news);
     }
 
-    private void createAPIClient() {
+    private static class insertAsyncTask extends AsyncTask<NewEntity, Void, Void>{
+
+        private NewDao newDao;
+
+        public insertAsyncTask(NewDao newDao) {
+            this.newDao = newDao;
+        }
+
+        @Override
+        protected Void doInBackground(NewEntity... news) {
+            newDao.insertNew(news[0]);
+            return null;
+        }
+    }
+
+/*    private void createAPIClient() {
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .registerTypeAdapter(GameNewsAPI.class, new NewsDeserializer())
@@ -78,20 +91,5 @@ public class NewRepository {
             e.getCause();
          }
      };
-    }
-
-    private static class insertAsyncTask extends AsyncTask<New, Void, Void>{
-
-        private NewDao newDao;
-
-        public insertAsyncTask(NewDao newDao) {
-            this.newDao = newDao;
-        }
-
-        @Override
-        protected Void doInBackground(New... news) {
-            newDao.insertNew(news[0]);
-            return null;
-        }
-    }
+    }*/
 }
