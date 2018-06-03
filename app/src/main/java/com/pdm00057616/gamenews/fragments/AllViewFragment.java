@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -75,26 +76,13 @@ public class AllViewFragment extends Fragment {
 
     private void init() {
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request original = chain.request();
-                        Request request = original.newBuilder()
-                                .header("Authorization", "Bearer " + aux)
-                                .build();
-                        return chain.proceed(request);
-                    }
-                }).build();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://gamenewsuca.herokuapp.com")
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                .client(client)
                 .build();
         GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<List<New>> news = service.getNews();
-        news.enqueue(new Callback<List<New>>() {
+        Single<List<New>> news = service.getNews("Beared "+aux);
+        /*news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
                 if (response.isSuccessful())
@@ -108,7 +96,7 @@ public class AllViewFragment extends Fragment {
             public void onFailure(Call<List<New>> call, Throwable t) {
                 t.printStackTrace();
             }
-        });
+        });*/
     }
 
 
