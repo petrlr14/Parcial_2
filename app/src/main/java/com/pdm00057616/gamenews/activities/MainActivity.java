@@ -14,7 +14,6 @@ import com.pdm00057616.gamenews.fragments.AllViewFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -60,84 +59,4 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
     }
-
-    /*private void getToken(){
-        Gson gson=new GsonBuilder()
-                .registerTypeAdapter(String.class, new TokenDeserializer())
-                .create();
-        Retrofit.Builder builder=new Retrofit.Builder()
-                .baseUrl("http://gamenewsuca.herokuapp.com")
-                .addConverterFactory(GsonConverterFactory.create(gson));
-        Retrofit retrofit=builder.build();
-        GameNewsAPI gameNewsAPI=retrofit.create(GameNewsAPI.class);
-        String credenciales="00057616";
-        Call<String> call=gameNewsAPI.login(credenciales, credenciales);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println(response.code());
-                if (response.isSuccessful()) {
-                    preferences(response.body());
-                }else
-                    Toast.makeText(MainActivity.this, "Error_no funciona el login", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                t.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error no funciona el login 2", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private void preferences(String token){
-        SharedPreferences preferences=this.getSharedPreferences("log", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor=preferences.edit();
-        editor.putString("token", token);
-        editor.commit();
-    }*/
-
-    /*private void init() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://gamenewsuca.herokuapp.com")
-                .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                .build();
-        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        *//*Call<List<New>> news=service.getNews();
-        news.enqueue(new Callback<List<New>>() {
-            @Override
-            public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                List<New> news1=response.body();
-                String y="";
-                if(news1!=null)
-                    Glide.with(getBaseContext())
-                    .load(news1.get(3).getCover_image()).into(imageView);
-            }
-
-            @Override
-            public void onFailure(Call<List<New>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });*//*
-     *//*final Call<List<User>> users = service.getUser();
-        users.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                List<User> usersList;
-                String aux = "";
-                usersList=response.body();
-                if(usersList!=null){
-                    for (User x : usersList) {
-                        aux += x.getUser()+"---"+x.getFavNews().size()+"\n";
-                        textView.setText(aux);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });*//*
-    }*/
 }
