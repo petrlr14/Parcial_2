@@ -2,7 +2,22 @@ package com.pdm00057616.gamenews.models;
 
 public class New {
 
-    private String _id, title, body, game, created_date, coverImage, description;
+    private String _id;
+    private String title;
+    private String body;
+    private String game;
+    private String created_date;
+    private String coverImage;
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    private String description;
     private int __v;
 
     @Override

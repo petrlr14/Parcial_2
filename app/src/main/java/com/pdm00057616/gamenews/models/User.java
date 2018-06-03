@@ -9,8 +9,6 @@ public class User {
     private String id;
     @SerializedName("created_date")
     private String date;
-    @SerializedName("__v")
-    private int v;
     @SerializedName("favoriteNews")
     private List<New> favNews;
 
@@ -31,14 +29,6 @@ public class User {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public int getV() {
-        return v;
-    }
-
-    public void setV(int v) {
-        this.v = v;
     }
 
     public List<New> getFavNews() {
