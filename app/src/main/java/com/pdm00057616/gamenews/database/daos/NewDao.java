@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.models.New;
 
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.List;
 public interface NewDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertNew(New news);
+    void insertNew(NewEntity news);
 
     @Query("SELECT*FROM NewEntity")
-    LiveData<List<New>> getAllNews();
+    LiveData<List<NewEntity>> getAllNews();
 
     @Query("SELECT*FROM NewEntity WHERE game=:game")
-    LiveData<List<New>> getNewByGame(String game);
+    LiveData<List<NewEntity>> getNewByGame(String game);
 }
