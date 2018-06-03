@@ -1,5 +1,8 @@
 package com.pdm00057616.gamenews.activities;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -11,6 +14,7 @@ import android.view.MenuItem;
 
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.fragments.AllViewFragment;
+import com.pdm00057616.gamenews.models.Login;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,8 +26,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isLogged();
         setContentView(R.layout.activity_main);
         bindViews();
+        setFirstView();
     }
 
     @Override
@@ -58,5 +64,21 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
         );
+    }
+    private void setFirstView(){
+        navigationView.getMenu().getItem(0).setChecked(true);
+        Fragment fragment = new AllViewFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, fragment)
+                .commit();
+        getSupportActionBar().setTitle(navigationView.getMenu().getItem(0).getTitle());
+    }
+
+    private void isLogged(){
+        SharedPreferences sharedPreferences=this.getSharedPreferences("log", MODE_PRIVATE);
+        if(!sharedPreferences.contains("token")){
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
     }
 }
