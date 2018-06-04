@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.util.Comparator;
+
 @Entity
 public class NewEntity {
 
@@ -22,10 +24,12 @@ public class NewEntity {
         this.game = game;
         this.createDate = createDate;
     }
-    private String title, coverImage,description, body, game;
+
+    private String title, coverImage, description, body, game;
     @ColumnInfo(name = "crate_date")
     private String createDate;
-@NonNull
+
+    @NonNull
     public String getId() {
         return id;
     }
@@ -33,7 +37,8 @@ public class NewEntity {
     public void setId(@NonNull String id) {
         this.id = id;
     }
-@NonNull
+
+    @NonNull
     public String getTitle() {
         return title;
     }
