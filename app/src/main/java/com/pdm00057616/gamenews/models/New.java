@@ -1,6 +1,8 @@
 package com.pdm00057616.gamenews.models;
 
-public class New {
+import java.util.Date;
+
+public class New implements Comparable<New> {
 
     private String _id;
     private String title;
@@ -8,6 +10,7 @@ public class New {
     private String game;
     private String created_date;
     private String coverImage;
+    private Date createdDate;
 
     public String getCoverImage() {
         return coverImage;
@@ -18,7 +21,6 @@ public class New {
     }
 
     private String description;
-    private int __v;
 
     @Override
     public String toString() {
@@ -45,9 +47,6 @@ public class New {
         return created_date;
     }
 
-    public int get__v() {
-        return __v;
-    }
 
     public void set_id(String _id) {
         this._id = _id;
@@ -69,9 +68,6 @@ public class New {
         this.created_date = created_date;
     }
 
-    public void set__v(int __v) {
-        this.__v = __v;
-    }
 
     public String getCover_image() {
         return coverImage;
@@ -88,4 +84,19 @@ public class New {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+
+    @Override
+    public int compareTo(New o) {
+        return getCreatedDate().compareTo(o.getCreatedDate());
+    }
+
 }
