@@ -38,7 +38,6 @@ public class UserDeserializer implements JsonDeserializer<User>{
             news.setBody(x.getAsJsonObject().get("body").getAsString());
             news.setGame(x.getAsJsonObject().get("game").getAsString());
             news.setCreated_date(x.getAsJsonObject().get("created_date").getAsString());
-            news.set__v(x.getAsJsonObject().get("__v").getAsInt());
             newsList.add(news);
         }
         return newsList;
