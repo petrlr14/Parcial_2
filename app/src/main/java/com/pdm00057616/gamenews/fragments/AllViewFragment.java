@@ -1,16 +1,12 @@
 package com.pdm00057616.gamenews.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -36,8 +31,11 @@ import com.pdm00057616.gamenews.models.New;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,7 +65,7 @@ public class AllViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.all_news_fragment, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter = new AllNewsAdapter(getContext());
+        adapter = new AllNewsAdapter();
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
         viewModel.getAllNews().observe(this, news -> adapter.setNewList(news));
         manager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL,
@@ -111,7 +109,17 @@ public class AllViewFragment extends Fragment {
     }
 
     private void setListNewEntity(List<New> list) {
-        List<NewEntity> entities = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        try {
+            for (New li : list) {
+                li.setCreatedDate(df.parse(li.getCreated_date()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        Collections.sort(list);
+        Collections.reverse(list);
         for (New x : list) {
             NewEntity newEntity = new NewEntity(
                     x.get_id(), x.getTitle(), x.getCoverImage(), x.getDescription(),
