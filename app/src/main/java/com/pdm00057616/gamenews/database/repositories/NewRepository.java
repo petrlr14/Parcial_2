@@ -43,6 +43,10 @@ public class NewRepository {
         return newDao.getAllNews();
     }
 
+    public LiveData<List<NewEntity>> getNewsByQuery(String query){
+        return newDao.getNewByQuery(query);
+    }
+
     public void insert(NewEntity news){
         new insertAsyncTask(newDao).execute(news);
     }
@@ -61,6 +65,7 @@ public class NewRepository {
             return null;
         }
     }
+
 
 /*    private void createAPIClient() {
         Gson gson = new GsonBuilder()
