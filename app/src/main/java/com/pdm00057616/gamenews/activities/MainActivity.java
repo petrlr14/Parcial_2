@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.fragments.AllViewFragment;
 import com.pdm00057616.gamenews.models.Login;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Picasso picasso=new Picasso.
+                Builder(getApplicationContext())
+                .indicatorsEnabled(true)
+                .build();
+        Picasso.setSingletonInstance(picasso);
         isLogged();
         setContentView(R.layout.activity_main);
         bindViews();

@@ -78,7 +78,7 @@ public class AllViewFragment extends Fragment {
         });
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
-        init();
+        //init();
         return view;
     }
 
