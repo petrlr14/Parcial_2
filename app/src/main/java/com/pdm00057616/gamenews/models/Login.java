@@ -1,31 +1,23 @@
 package com.pdm00057616.gamenews.models;
 
-import com.google.gson.annotations.SerializedName;
-
 public class Login {
 
-    @SerializedName("user")
-    private String username;
-    private String password;
+    private boolean isOKResponse;
+    private String token;
 
-    public Login(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public boolean isOKResponse() {
+        return isOKResponse;
     }
 
-    public String getUsername() {
-        return username;
+    public void setOKResponse(boolean OKResponse) {
+        isOKResponse = OKResponse;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getToken() {
+        return token;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setToken(String token) {
+        this.token = token;
     }
 }
