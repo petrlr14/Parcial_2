@@ -22,16 +22,6 @@ import java.util.List;
 public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
 
     private List<NewEntity> newList;
-    private Context context;
-    private RequestOptions requestOptions;
-
-    public AllNewsAdapter(Context context) {
-        this.context = context;
-        requestOptions = new RequestOptions()
-                .error(R.drawable.error_loading)
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL);
-    }
 
     @NonNull
     @Override
@@ -60,22 +50,11 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
 
     private void bindViews(NewEntity news, ViewHolder holder) {
         holder.title.setText(news.getTitle());
-        holder.description.setText(news.getDescription());
+        holder.description.setText(news.getGame());
         if (!(news.getCoverImage() == null) &&
                 news.getCoverImage().length() > 20) {
-            /*GlideApp.with(context)
-                    .load(news.getCoverImage())
-                    .apply(requestOptions)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(holder.imageView)
-                    .clearOnDetach();*/
             Picasso.get().load(news.getCoverImage()).error(R.drawable.error_loading).into(holder.imageView);
         } else {
-            /*GlideApp.with(context)
-                    .load(R.drawable.error_loading)
-                    .centerCrop()
-                    .into(holder.imageView)
-                    .clearOnDetach();*/
             Picasso.get().load(R.drawable.error_loading).into(holder.imageView);
         }
     }
