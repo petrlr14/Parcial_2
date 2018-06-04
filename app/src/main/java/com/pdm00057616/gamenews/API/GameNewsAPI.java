@@ -1,5 +1,6 @@
 package com.pdm00057616.gamenews.API;
 
+import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
 import com.pdm00057616.gamenews.models.User;
 
@@ -25,7 +26,7 @@ public interface GameNewsAPI {
 
     @FormUrlEncoded
     @POST("/login")
-    Call<String> login(
+    Call<Login> login(
             @Field("user") String username,
             @Field("password") String password
     );
