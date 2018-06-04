@@ -27,6 +27,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.view.View.GONE;
+
 public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText editTextUser, editTextPassword;
@@ -60,31 +62,35 @@ public class LoginActivity extends AppCompatActivity {
     private void log() {
         relativeLayout.setVisibility(View.VISIBLE);
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(String.class, new TokenDeserializer())
+                .registerTypeAdapter(Login.class, new TokenDeserializer())
                 .create();
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(gson));
         Retrofit retrofit = builder.build();
         GameNewsAPI gameNewsAPI = retrofit.create(GameNewsAPI.class);
-        Login login = new Login(editTextUser.getText().toString(), editTextPassword.getText().toString());
-        Call<String> call = gameNewsAPI.login(login.getUsername(), login.getPassword());
-        call.enqueue(new Callback<String>() {
+        Call<Login> call = gameNewsAPI.
+                login(editTextUser.getText().toString(), editTextPassword.getText().toString());
+        call.enqueue(new Callback<Login>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful() && !response.body().equals("")) {
+            public void onResponse(Call<Login> call, Response<Login> response) {
+                if (response.isSuccessful()&&response.body().isOKResponse()) {
                     Toast.makeText(LoginActivity.this, "Succed", Toast.LENGTH_SHORT).show();
+                    preferences(response.body().getToken());
                     startMain();
-                } else {
-                    Toast.makeText(LoginActivity.this, response.message(), Toast.LENGTH_SHORT).show();
-                    relativeLayout.setVisibility(View.GONE);
+                }else if (!response.body().isOKResponse()){
+                    relativeLayout.setVisibility(GONE);
+                    Toast.makeText(LoginActivity.this, response.body().getToken(), Toast.LENGTH_SHORT).show();
+                }else{
+                    relativeLayout.setVisibility(GONE);
+                    Toast.makeText(LoginActivity.this, "Something weird happend", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Login> call, Throwable t) {
                 if (t instanceof SocketTimeoutException) {
-                    relativeLayout.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(GONE);
                     Toast.makeText(LoginActivity.this, "Time out bitch", Toast.LENGTH_SHORT).show();
                 }
             }
