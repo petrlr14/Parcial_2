@@ -51,7 +51,6 @@ public class ClientRequest {
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-                System.out.println(response.code());
                 if (response.isSuccessful() && response.body().isOKResponse()) {
                     Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
                     saveToken(context, response.body().getToken());
@@ -147,8 +146,11 @@ public class ClientRequest {
         categories.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                for(String x:response.body()){
-                    System.out.println(x);
+                System.out.println(response.code());
+                if (response.body()!=null) {
+                    for(String x:response.body()){
+                        System.out.println(x);
+                    }
                 }
             }
 
