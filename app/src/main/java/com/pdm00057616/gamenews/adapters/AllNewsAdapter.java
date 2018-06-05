@@ -1,6 +1,5 @@
 package com.pdm00057616.gamenews.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.PicassoProvider;
 
 import java.util.List;
 
@@ -42,14 +40,12 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
     public void setNewList(List<NewEntity> newList) {
         this.newList = newList;
         notifyDataSetChanged();
-        System.out.println(newList.size());
     }
 
     private void bindViews(NewEntity news, ViewHolder holder) {
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getGame());
-        if (!(news.getCoverImage() == null) &&
-                news.getCoverImage().length() > 20) {
+        if (!(news.getCoverImage() == null)) {
             Picasso.get().load(news.getCoverImage()).error(R.drawable.error_loading).into(holder.imageView);
         } else {
             Picasso.get().load(R.drawable.error_loading).error(R.drawable.error_loading).into(holder.imageView);
