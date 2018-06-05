@@ -13,9 +13,11 @@ import com.google.gson.GsonBuilder;
 import com.pdm00057616.gamenews.API.deserializer.CategoriesDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
 import com.pdm00057616.gamenews.activities.MainActivity;
+import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
+import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 
 import java.net.SocketTimeoutException;
@@ -133,7 +135,7 @@ public class ClientRequest {
     }
 
 
-    public static void getCategories(String aux){
+    public static void getCategories(String aux, CategoryViewModel viewModel){
         Gson gson=new GsonBuilder()
                 .registerTypeAdapter(ArrayList.class, new CategoriesDeserializer())
                 .create();
@@ -149,7 +151,7 @@ public class ClientRequest {
                 System.out.println(response.code());
                 if (response.body()!=null) {
                     for(String x:response.body()){
-                        System.out.println(x);
+                        viewModel.insertCategory(new CategoryEntity(x));
                     }
                 }
             }
