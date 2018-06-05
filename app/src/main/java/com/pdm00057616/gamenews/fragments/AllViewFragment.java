@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -36,6 +37,7 @@ public class AllViewFragment extends Fragment {
     String aux;
     NewsViewModel viewModel;
     private SearchView searchView;
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +51,9 @@ public class AllViewFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.all_news_fragment, container, false);
+        refreshLayout=view.findViewById(R.id.refresh);
+        System.out.println(refreshLayout);
+        refreshLayout.setOnRefreshListener(()->ClientRequest.fetchAllNews(getContext(), viewModel, aux,refreshLayout));
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter = new AllNewsAdapter();
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);

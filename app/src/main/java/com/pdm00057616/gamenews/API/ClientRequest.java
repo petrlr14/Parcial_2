@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -88,7 +89,7 @@ public class ClientRequest {
     }
 
 
-    public static void fetchAllNews(Context context, NewsViewModel viewModel, String aux) {
+    public static void fetchAllNews(Context context, NewsViewModel viewModel, String aux, SwipeRefreshLayout refreshLayout) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
@@ -98,16 +99,17 @@ public class ClientRequest {
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
+                refreshLayout.setRefreshing(false);
                 if (response.isSuccessful()) {
                     setListNewEntity(response.body(), viewModel);
                     Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
                 } else
                     Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
+                refreshLayout.setRefreshing(false);
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
