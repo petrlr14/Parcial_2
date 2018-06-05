@@ -24,10 +24,10 @@ public class CategoryRepository {
     }
 
     public void insert(CategoryEntity categoryEntity){
-        new InsertCategoryAsyncTask(categoryDao).execute();
+        new InsertCategoryAsyncTask(categoryDao).execute(categoryEntity);
     }
 
-    private class InsertCategoryAsyncTask extends AsyncTask<CategoryEntity, Void, Void>{
+    private static class InsertCategoryAsyncTask extends AsyncTask<CategoryEntity, Void, Void>{
 
         private CategoryDao categoryDao;
 
