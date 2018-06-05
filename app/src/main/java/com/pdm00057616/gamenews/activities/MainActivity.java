@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
+import com.pdm00057616.gamenews.adapters.AllNewsAdapter;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.fragments.AllViewFragment;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
@@ -60,7 +62,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_dehaze_24dp);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        navigationView.setNavigationItemSelectedListener(item ->{
+            Fragment fragment=new AllViewFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_content, fragment)
+                    .commit();
+            drawerLayout.closeDrawers();
+            item.setChecked(true);
+            getSupportActionBar().setTitle(item.getTitle());
+            return true;
+        } );
     }
 
     private void addMenuItems(List<CategoryEntity> categories){
@@ -69,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
             navigationView
                     .getMenu().findItem(R.id.games_section)
                     .getSubMenu().add(x.getName());
-            System.out.println("holi");
         }
     }
 
