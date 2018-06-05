@@ -12,9 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.fragments.AllViewFragment;
-import com.pdm00057616.gamenews.models.Login;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,12 +27,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Picasso picasso=new Picasso.
-                Builder(getApplicationContext())
-                .indicatorsEnabled(true)
-                .build();
-        Picasso.setSingletonInstance(picasso);
         isLogged();
+        if (Picasso.get() == null) {
+            Picasso picasso = new Picasso.
+                    Builder(getApplicationContext())
+                    .indicatorsEnabled(true)
+                    .build();
+            Picasso.setSingletonInstance(picasso);
+        }
+        ClientRequest.getCategories(getToken());
         setContentView(R.layout.activity_main);
         bindViews();
         setFirstView();
@@ -81,10 +84,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void isLogged(){
-        SharedPreferences sharedPreferences=this.getSharedPreferences("log", MODE_PRIVATE);
-        if(!sharedPreferences.contains("token")){
+        SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);
+        if (!sharedPreferences.contains("token")) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
+    }
+    private String getToken(){
+        SharedPreferences preferences = this.getSharedPreferences("log", Context.MODE_PRIVATE);
+        if (preferences.contains("token")) {
+            return preferences.getString("token", "");
+        }
+        return "";
     }
 }
