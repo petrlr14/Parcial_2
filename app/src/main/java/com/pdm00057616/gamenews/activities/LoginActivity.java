@@ -39,5 +39,10 @@ public class LoginActivity extends AppCompatActivity {
         }
         ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), this, relativeLayout);
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
 
