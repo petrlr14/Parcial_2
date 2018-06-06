@@ -13,21 +13,48 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pdm00057616.gamenews.R;
+import com.pdm00057616.gamenews.adapters.GameViewPagerAdapter;
 
-public class IndividualGameFragment extends Fragment{
+public class IndividualGameFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    /*private ViewPagerAdapter adapter;
-    private CategoryViewModel categoryViewModel;*/
+    private GameViewPagerAdapter adapter;
     private Context context;
     private Activity activity;
+    private String category;
+
+    public static IndividualGameFragment newInstance(String category) {
+
+        Bundle args = new Bundle();
+        args.putString("category", category);
+        IndividualGameFragment fragment = new IndividualGameFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        category=getArguments().getString("category");
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.individual_game_fragment, container, false);
+        View view = inflater.inflate(R.layout.individual_game_fragment, container, false);
+        adapter=new GameViewPagerAdapter(getChildFragmentManager());
+        viewPager = view.findViewById(R.id.view_pager);
+        tabLayout = view.findViewById(R.id.tab_layout);
+        setFragments();
+        return view;
+    }
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+    private void setFragments(){
+        adapter.addFragment(NewsViewFragment.newInstance(true, category), "News");
+        adapter.addFragment(TopPlayersFragmet.newInstance(category), "Top Players");
+        adapter.addFragment(GameImagesFragment.newInstance(category), "Images");
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 }
