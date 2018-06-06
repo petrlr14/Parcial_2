@@ -13,7 +13,6 @@ public class TokenDeserializer implements JsonDeserializer<Login> {
     @Override
     public Login deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Login aux=new Login();
-        System.out.println(json.getAsJsonObject());
         if(json.getAsJsonObject()!=null){
             JsonObject tokenJsonObject=json.getAsJsonObject();
             if (tokenJsonObject.get("token")!=null) {
