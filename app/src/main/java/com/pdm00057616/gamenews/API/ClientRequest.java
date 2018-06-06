@@ -12,14 +12,18 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pdm00057616.gamenews.API.deserializer.CategoriesDeserializer;
+import com.pdm00057616.gamenews.API.deserializer.PlayerDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
 import com.pdm00057616.gamenews.activities.MainActivity;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
+import com.pdm00057616.gamenews.database.entities_models.PlayerEntity;
 import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
+import com.pdm00057616.gamenews.models.Player;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
+import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.net.SocketTimeoutException;
 import java.text.DateFormat;
@@ -54,15 +58,16 @@ public class ClientRequest {
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
+                System.out.println(response.code());
                 if (response.isSuccessful() && response.body().isOKResponse()) {
                     Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
                     saveToken(context, response.body().getToken());
                     startMain(context);
                 } else if (!response.body().isOKResponse()) {
-                    relativeLayout.setVisibility(GONE);
+                    relativeLayout.setVisibility(View.GONE);
                     Toast.makeText(context, response.body().getToken(), Toast.LENGTH_SHORT).show();
                 } else {
-                    relativeLayout.setVisibility(GONE);
+                    relativeLayout.setVisibility(View.GONE);
                     Toast.makeText(context, "Something weird happend", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -71,6 +76,8 @@ public class ClientRequest {
             public void onFailure(Call<Login> call, Throwable t) {
                 if (t instanceof SocketTimeoutException) {
                     Toast.makeText(context, "Time out bitch", Toast.LENGTH_SHORT).show();
+                    relativeLayout.setVisibility(GONE);
+                    t.printStackTrace();
                 }
             }
         });
@@ -89,13 +96,13 @@ public class ClientRequest {
     }
 
 
-    public static void fetchAllNews(Context context, NewsViewModel viewModel, String aux, SwipeRefreshLayout refreshLayout) {
+    public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout refreshLayout) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .build();
         GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<List<New>> news = service.getNews("Beared " + aux);
+        Call<List<New>> news = service.getNews("Beared " + token);
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
@@ -137,7 +144,7 @@ public class ClientRequest {
     }
 
 
-    public static void getCategories(String aux, CategoryViewModel viewModel){
+    public static void getCategories(String token, CategoryViewModel viewModel){
         Gson gson=new GsonBuilder()
                 .registerTypeAdapter(ArrayList.class, new CategoriesDeserializer())
                 .create();
@@ -146,7 +153,7 @@ public class ClientRequest {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         GameNewsAPI service=retrofit.create(GameNewsAPI.class);
-        Call<List<String>> categories=service.getCategories("Beared " + aux);
+        Call<List<String>> categories=service.getCategories("Beared " + token);
         categories.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
@@ -161,6 +168,40 @@ public class ClientRequest {
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
 
+            }
+        });
+    }
+
+
+    public static void getPlayers(String token, PlayerViewModel viewModel){
+        Gson gson=new GsonBuilder()
+                .registerTypeAdapter(Player.class, new PlayerDeserializer())
+                .create();
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(GameNewsAPI.END_POINT)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        GameNewsAPI service=retrofit.create(GameNewsAPI.class);
+        Call<List<Player>> players=service.getPlayers("Beared "+token);
+        players.enqueue(new Callback<List<Player>>() {
+            @Override
+            public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
+                if(response.code()==200){
+                    for (Player x : response.body()) {
+                        System.out.println(x.get_id());
+                        PlayerEntity player = new PlayerEntity(
+                                x.get_id(), x.getAvatar(), x.getName(),
+                                x.getBiografia(), x.getGame()
+                        );
+                        viewModel.insert(player);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Player>> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
