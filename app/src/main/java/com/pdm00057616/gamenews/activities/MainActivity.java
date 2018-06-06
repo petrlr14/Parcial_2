@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
-import com.pdm00057616.gamenews.fragments.GameImagesFragment;
 import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
 import com.pdm00057616.gamenews.fragments.NewsViewFragment;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         isLogged();
         setContentView(R.layout.activity_main);
-        playerViewModel=ViewModelProviders.of(this).get(PlayerViewModel.class);
+        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
         categoryViewModel
                 .getAllCategories()
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void bindViews() {
@@ -68,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             Fragment fragment;
             switch (item.getItemId()) {
-                case R.id.news_section:
-                    fragment =NewsViewFragment.newInstance(false);
+                case R.id.all_news:
+                    fragment=NewsViewFragment.newInstance(false);
                     break;
                 default:
                     fragment = IndividualGameFragment.newInstance(item.getTitle().toString());
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.frame_content, fragment)
                     .commit();
             drawerLayout.closeDrawers();
-            getSupportActionBar().setTitle(item.getTitle());
             item.setChecked(true);
             getSupportActionBar().setTitle(item.getTitle());
             return true;
@@ -87,13 +85,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addMenuItems(List<CategoryEntity> categories) {
-        navigationView.getMenu().findItem(R.id.games_section).getSubMenu().clear();
+        navigationView.getMenu().findItem(R.id.game_section).getSubMenu().clear();
         for (CategoryEntity x : categories) {
             navigationView
-                    .getMenu().findItem(R.id.games_section)
+                    .getMenu().findItem(R.id.game_section)
                     .getSubMenu().add(x.getName());
         }
     }
+
 
     private void isLogged() {
         SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);

@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/news_section"
-            android:title="@string/news_menu" />
-    </group>
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/games_section"
-            android:title="@string/games_menu">
+            android:title="@string/news_menu">
+
             <menu>
-                <item
-                    android:id="@+id/game1_section"
-                    android:title="@string/league_of_legends_menu" />
-                <item
-                    android:id="@+id/game2_section"
-                    android:title="@string/dota_menu" />
-                <item
-                    android:id="@+id/game3_section"
-                    android:title="@string/csgo_menu" />
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/all_news"
+                        android:title="All news" />
+                    <item
+                        android:id="@+id/fav_news"
+                        android:title="Favourites news" />
+                </group>
+            </menu>
+
+        </item>
+
+        <item
+            android:id="@+id/game_section"
+            android:title="@string/games_menu">
+
+            <menu>
+                <group android:checkableBehavior="single">
+                </group>
+
             </menu>
         </item>
-    </group>
-    <group android:checkableBehavior="single">
+
         <item
             android:id="@+id/extra_section"
             android:title="">
             <menu>
-                <item
-                    android:id="@+id/setting_section"
-                    android:title="@string/settings_menu" />
-                <item
-                    android:id="@+id/fav_section"
-                    android:title="@string/favorites_menu" />
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/setting_section"
+                        android:title="@string/settings_menu" />
+
+                    <item android:id="@+id/logout"
+                        android:icon="@drawable/ic_logout_24dp"
+                        android:title="Logout"/>
+
+                </group>
             </menu>
         </item>
     </group>
