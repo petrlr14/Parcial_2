@@ -25,4 +25,7 @@ public interface NewDao {
 
     @Query("SELECT*FROM NewEntity WHERE title like :query")
     LiveData<List<NewEntity>> getNewByQuery(String query);
+
+    @Query("SELECT*FROM NewEntity WHERE game =:game")
+    LiveData<List<NewEntity>> getNewsByGame(String game);
 }

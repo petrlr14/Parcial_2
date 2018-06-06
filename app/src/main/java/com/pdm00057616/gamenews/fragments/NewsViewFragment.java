@@ -25,19 +25,36 @@ import android.widget.TextView;
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.adapters.AllNewsAdapter;
+import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AllViewFragment extends Fragment {
+public class NewsViewFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private AllNewsAdapter adapter;
     private GridLayoutManager manager;
-    String aux;
-    NewsViewModel viewModel;
+    private String aux, category;
+    private NewsViewModel viewModel;
     private SearchView searchView;
     private SwipeRefreshLayout refreshLayout;
+    private boolean isCategory;
+
+    public static NewsViewFragment newInstance(boolean category, String ...categories) {
+
+        Bundle args = new Bundle();
+        args.putBoolean("isCategory", category);
+        System.out.println(categories.length+"asdsadsadsad");
+        if (categories.length>0) {
+            args.putString("category", categories[0]);
+        }
+        NewsViewFragment fragment = new NewsViewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,19 +62,23 @@ public class AllViewFragment extends Fragment {
         SharedPreferences preferences = getActivity().getSharedPreferences("log", Context.MODE_PRIVATE);
         aux = preferences.getString("token", "");
         setHasOptionsMenu(true);
+        isCategory=getArguments().getBoolean("isCategory");
+        if(getArguments().getString("category")!=null){
+            category=getArguments().getString("category");
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.all_news_fragment, container, false);
+        View view = inflater.inflate(R.layout.recycler_view_fragmet, container, false);
         refreshLayout=view.findViewById(R.id.refresh);
         System.out.println(refreshLayout);
         refreshLayout.setOnRefreshListener(()->ClientRequest.fetchAllNews(getContext(), viewModel, aux,refreshLayout));
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter = new AllNewsAdapter();
         viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-        viewModel.getAllNews().observe(this, news -> adapter.setNewList(news));
+        viewModel.getAllNews().observe(this, this::setList);
         manager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL,
                 false);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -69,6 +90,21 @@ public class AllViewFragment extends Fragment {
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
         return view;
+    }
+
+    private void setList(List<NewEntity> list){
+        if (isCategory) {
+            List<NewEntity> aux=new ArrayList<>();
+            for(NewEntity x:list){
+                System.out.println(x.getGame()+"---"+category);
+                if(x.getGame().equals(category)){
+                    aux.add(x);
+                }
+            }
+            adapter.setNewList(aux);
+        }else{
+            adapter.setNewList(list);
+        }
     }
 
     @Override
@@ -106,7 +142,7 @@ public class AllViewFragment extends Fragment {
                     if (newEntities == null) {
                         return;
                     }
-                    adapter.setNewList(newEntities);
+                    setList(newEntities);
                 });
     }
 

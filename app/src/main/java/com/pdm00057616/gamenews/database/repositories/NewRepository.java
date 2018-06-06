@@ -30,6 +30,10 @@ public class NewRepository {
         return newDao.getNewByQuery(query);
     }
 
+    public LiveData<List<NewEntity>> getNewsByGame(String game){
+        return newDao.getNewsByGame(game);
+    }
+
     public void insert(NewEntity news){
         new insertAsyncTask(newDao).execute(news);
     }

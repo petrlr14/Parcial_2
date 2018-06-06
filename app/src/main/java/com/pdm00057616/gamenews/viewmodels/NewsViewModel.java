@@ -27,6 +27,10 @@ public class NewsViewModel extends AndroidViewModel {
         return repository.getNewsByQuery(query);
     }
 
+    public LiveData<List<NewEntity>> getNewsByGame(String game){
+        return repository.getNewsByGame(game);
+    }
+
     public void insert(NewEntity news) {
         repository.insert(news);
     }
