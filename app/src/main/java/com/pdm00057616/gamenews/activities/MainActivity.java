@@ -5,23 +5,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
-import com.pdm00057616.gamenews.adapters.AllNewsAdapter;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
-import com.pdm00057616.gamenews.fragments.AllViewFragment;
+import com.pdm00057616.gamenews.fragments.GameImagesFragment;
+import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
+import com.pdm00057616.gamenews.fragments.NewsViewFragment;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
-import com.squareup.picasso.Picasso;
+import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.util.List;
 
@@ -31,17 +30,21 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private CategoryViewModel categoryViewModel;
+    private PlayerViewModel playerViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isLogged();
         setContentView(R.layout.activity_main);
-        categoryViewModel= ViewModelProviders.of(this).get(CategoryViewModel.class);
+        playerViewModel=ViewModelProviders.of(this).get(PlayerViewModel.class);
+        categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
         categoryViewModel
                 .getAllCategories()
                 .observe(this, this::addMenuItems);
-        ClientRequest.getCategories(getToken(),categoryViewModel);
+
+        ClientRequest.getCategories(getToken(), categoryViewModel);
+        ClientRequest.getPlayers(getToken(), playerViewModel);
         bindViews();
     }
 
@@ -62,35 +65,45 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_dehaze_24dp);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        navigationView.setNavigationItemSelectedListener(item ->{
-            Fragment fragment=new AllViewFragment();
+        navigationView.setNavigationItemSelectedListener(item -> {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.news_section:
+                    fragment =NewsViewFragment.newInstance(false);
+                    break;
+                default:
+                    fragment = IndividualGameFragment.newInstance(item.getTitle().toString());
+                    break;
+            }
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.frame_content, fragment)
                     .commit();
             drawerLayout.closeDrawers();
+            getSupportActionBar().setTitle(item.getTitle());
             item.setChecked(true);
             getSupportActionBar().setTitle(item.getTitle());
             return true;
-        } );
+        });
     }
 
-    private void addMenuItems(List<CategoryEntity> categories){
+    private void addMenuItems(List<CategoryEntity> categories) {
         navigationView.getMenu().findItem(R.id.games_section).getSubMenu().clear();
-        for(CategoryEntity x:categories){
+        for (CategoryEntity x : categories) {
             navigationView
                     .getMenu().findItem(R.id.games_section)
                     .getSubMenu().add(x.getName());
         }
     }
 
-    private void isLogged(){
+    private void isLogged() {
         SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);
         if (!sharedPreferences.contains("token")) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }
-    private String getToken(){
+
+    private String getToken() {
         SharedPreferences preferences = this.getSharedPreferences("log", Context.MODE_PRIVATE);
         if (preferences.contains("token")) {
             return preferences.getString("token", "");
