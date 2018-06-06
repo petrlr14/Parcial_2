@@ -14,9 +14,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
+public class NewsAndImagesAdapter extends RecyclerView.Adapter<NewsAndImagesAdapter.ViewHolder> {
 
     private List<NewEntity> newList;
+    private boolean isNews;
+
+    public NewsAndImagesAdapter(boolean isNews) {
+        this.isNews=isNews;
+    }
 
     @NonNull
     @Override
@@ -28,7 +33,7 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NewEntity newAux = newList.get(holder.getAdapterPosition());
-        bindViews(newAux, holder);
+        bindNews(newAux, holder);
 
     }
 
@@ -42,7 +47,7 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    private void bindViews(NewEntity news, ViewHolder holder) {
+    private void bindNews(NewEntity news, ViewHolder holder) {
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getGame());
         if (!(news.getCoverImage() == null)) {
@@ -51,6 +56,12 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
             Picasso.get().load(R.drawable.error_loading).error(R.drawable.error_loading).into(holder.imageView);
         }
     }
+
+    private void bindImages(NewEntity news, ViewHolder holder){
+
+    }
+
+
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
