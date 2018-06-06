@@ -19,7 +19,7 @@ public class PlayerDeserializer implements JsonDeserializer<Player> {
             player.set_id(array.get("_id").getAsString());
             player.setAvatar(array.get("avatar").getAsString());
             player.setBiografia(array.get("biografia").getAsString());
-            player.setName(array.get("game").getAsString());
+            player.setName(array.get("name").getAsString());
         }
         return player;
     }
