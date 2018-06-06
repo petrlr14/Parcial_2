@@ -173,7 +173,7 @@ public class ClientRequest {
     }
 
 
-    public static void getPlayers(String token, PlayerViewModel viewModel){
+    public static void getPlayers(String token, PlayerViewModel viewModel, SwipeRefreshLayout...refresh){
         Gson gson=new GsonBuilder()
                 .registerTypeAdapter(Player.class, new PlayerDeserializer())
                 .create();
@@ -194,7 +194,9 @@ public class ClientRequest {
                                 x.getBiografia(), x.getGame()
                         );
                         viewModel.insert(player);
-
+                        if (refresh.length>0) {
+                            refresh[0].setRefreshing(false);
+                        }
                     }
                 }
             }
