@@ -2,6 +2,7 @@ package com.pdm00057616.gamenews.API;
 
 import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
+import com.pdm00057616.gamenews.models.Player;
 import com.pdm00057616.gamenews.models.User;
 
 import java.util.List;
@@ -33,5 +34,7 @@ public interface GameNewsAPI {
     @GET("/news/type/list")
     Call<List<String>> getCategories(@Header("Authorization") String auth);
 
+    @GET("/players")
+    Call<List<Player>> getPlayers(@Header("Authorization")String auth);
 
 }
