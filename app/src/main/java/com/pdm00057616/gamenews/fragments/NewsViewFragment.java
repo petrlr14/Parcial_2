@@ -73,7 +73,6 @@ public class NewsViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragmet, container, false);
         refreshLayout=view.findViewById(R.id.refresh);
-        System.out.println(refreshLayout);
         refreshLayout.setOnRefreshListener(()->ClientRequest.fetchAllNews(getContext(), viewModel, aux,refreshLayout));
         recyclerView = view.findViewById(R.id.recycler_view);
         adapter = new AllNewsAdapter();
