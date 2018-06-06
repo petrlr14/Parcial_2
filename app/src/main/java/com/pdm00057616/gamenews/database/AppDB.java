@@ -44,7 +44,7 @@ public abstract class AppDB extends RoomDatabase {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-
+            database.execSQL("CREATE TABLE CategoryEntity (name TEXT primary key not null)");
         }
     };
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
