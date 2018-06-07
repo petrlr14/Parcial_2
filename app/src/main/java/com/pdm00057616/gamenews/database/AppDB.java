@@ -21,7 +21,7 @@ import com.pdm00057616.gamenews.database.entities_models.UserEntity;
 
 @Database(
         entities = { PlayerEntity.class,FavNewsEntity.class, NewEntity.class, UserEntity.class, CategoryEntity.class},
-        exportSchema = false, version = 3)
+        exportSchema = false, version = 4)
 public abstract class AppDB extends RoomDatabase {
 
     private static volatile AppDB db;
@@ -37,7 +37,7 @@ public abstract class AppDB extends RoomDatabase {
     private static AppDB createDB(Context context) {
         return Room.
                 databaseBuilder(context, AppDB.class, DB_NAME)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .build();
     }
 
@@ -52,6 +52,13 @@ public abstract class AppDB extends RoomDatabase {
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE PlayerEntity(id TEXT primary key not null," +
                     "avatar TEXT, name TEXT, bio TEXT, game TEXT)");
+        }
+    };
+    static final Migration MIGRATION_3_4 = new Migration(3,4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("DROP TABLE IF EXISTS FavNewsEntity");
+            database.execSQL("CREATE TABLE FavNewsEntity(user_id TEXT not null, new_id TEXT not null, primary key (user_id, new_id))");
         }
     };
 
