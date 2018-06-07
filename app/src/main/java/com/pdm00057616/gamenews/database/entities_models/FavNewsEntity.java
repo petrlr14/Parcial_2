@@ -2,25 +2,9 @@ package com.pdm00057616.gamenews.database.entities_models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.Index;
 import android.support.annotation.NonNull;
 
-import static android.arch.persistence.room.ForeignKey.CASCADE;
-
-@Entity
-        (indices = {@Index("new_id"), @Index("user_id")},
-                foreignKeys = {
-                @ForeignKey(
-                        entity = UserEntity.class,
-                        parentColumns = "_id",
-                        childColumns = "user_id",
-                        onDelete = CASCADE),
-                @ForeignKey(entity = NewEntity.class,
-                        parentColumns = "_id",
-                        childColumns = "new_id",
-                        onDelete = CASCADE)},
-                primaryKeys = {"user_id", "new_id"})
+@Entity(primaryKeys = {"user_id", "new_id"})
 
 public class FavNewsEntity {
     @NonNull
