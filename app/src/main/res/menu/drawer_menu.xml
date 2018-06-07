@@ -9,10 +9,12 @@
                 <group android:checkableBehavior="single">
                     <item
                         android:id="@+id/all_news"
-                        android:title="All news" />
+                        android:icon="@drawable/ic_new_24dp"
+                        android:title="@string/all_news_option" />
                     <item
                         android:id="@+id/fav_news"
-                        android:title="Favourites news" />
+                        android:icon="@drawable/ic_fav_24dp"
+                        android:title="@string/favourites_news_option" />
                 </group>
             </menu>
 
@@ -20,11 +22,10 @@
 
         <item
             android:id="@+id/game_section"
+            android:icon="@drawable/ic_videogame_24dp"
             android:title="@string/games_menu">
 
             <menu>
-                <group android:checkableBehavior="single">
-                </group>
 
             </menu>
         </item>
@@ -38,9 +39,10 @@
                         android:id="@+id/setting_section"
                         android:title="@string/settings_menu" />
 
-                    <item android:id="@+id/logout"
+                    <item
+                        android:id="@+id/logout"
                         android:icon="@drawable/ic_logout_24dp"
-                        android:title="Logout"/>
+                        android:title="@string/logout_option" />
 
                 </group>
             </menu>

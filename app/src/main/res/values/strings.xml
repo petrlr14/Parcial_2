@@ -15,11 +15,10 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_username">This username is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
+
     <string name="image_by_category_description">Image by category</string>
     <string name="player_photo_description">Player photo</string>
+    <string name="all_news_option">All news</string>
+    <string name="favourites_news_option">Favourites news</string>
+    <string name="logout_option">Logout</string>
 </resources>

@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.SubMenu;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
@@ -19,6 +20,7 @@ import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
 import com.pdm00057616.gamenews.fragments.NewsViewFragment;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
+import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.util.List;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private CategoryViewModel categoryViewModel;
     private PlayerViewModel playerViewModel;
+    private NewsViewModel newsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +40,12 @@ public class MainActivity extends AppCompatActivity {
         isLogged();
         setContentView(R.layout.activity_main);
         playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+        newsViewModel=ViewModelProviders.of(this).get(NewsViewModel.class);
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
         categoryViewModel
                 .getAllCategories()
                 .observe(this, this::addMenuItems);
-
+        ClientRequest.fetchAllNews(this, newsViewModel, getToken());
         ClientRequest.getCategories(getToken(), categoryViewModel);
         ClientRequest.getPlayers(getToken(), playerViewModel);
         bindViews();
@@ -70,16 +74,22 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.all_news:
                     fragment=NewsViewFragment.newInstance(false);
                     break;
+                case R.id.logout:
+                    logout();
+                    fragment=null;
+                    break;
                 default:
-                    fragment = IndividualGameFragment.newInstance(item.getTitle().toString());
+                    fragment = IndividualGameFragment.newInstance(item.getTitle().toString().toLowerCase());
                     break;
             }
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_content, fragment)
-                    .commit();
-            drawerLayout.closeDrawers();
-            item.setChecked(true);
-            getSupportActionBar().setTitle(item.getTitle());
+            if (fragment!=null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_content, fragment)
+                        .commit();
+                drawerLayout.closeDrawers();
+                item.setChecked(true);
+                getSupportActionBar().setTitle(item.getTitle());
+            }
             return true;
         });
     }
@@ -89,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
         for (CategoryEntity x : categories) {
             navigationView
                     .getMenu().findItem(R.id.game_section)
-                    .getSubMenu().add(x.getName());
+                    .getSubMenu().add(x.getName().toUpperCase())
+                    .setIcon(R.drawable.ic_videogame_24dp);
         }
     }
 
@@ -108,5 +119,13 @@ public class MainActivity extends AppCompatActivity {
             return preferences.getString("token", "");
         }
         return "";
+    }
+
+    private void logout(){
+        SharedPreferences preferences=this.getSharedPreferences("log", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=preferences.edit();
+        editor.clear();
+        editor.commit();
+        isLogged();
     }
 }

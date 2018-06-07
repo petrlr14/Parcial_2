@@ -96,7 +96,7 @@ public class ClientRequest {
     }
 
 
-    public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout refreshLayout) {
+    public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout ... refreshLayout) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
@@ -106,7 +106,9 @@ public class ClientRequest {
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                refreshLayout.setRefreshing(false);
+                if (refreshLayout.length>0) {
+                    refreshLayout[0].setRefreshing(false);
+                }
                 if (response.isSuccessful()) {
                     setListNewEntity(response.body(), viewModel);
                     Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
@@ -116,7 +118,9 @@ public class ClientRequest {
 
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
-                refreshLayout.setRefreshing(false);
+                if (refreshLayout.length>0) {
+                    refreshLayout[0].setRefreshing(false);
+                }
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
