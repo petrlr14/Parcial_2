@@ -5,18 +5,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pdm00057616.gamenews.R;
+import com.pdm00057616.gamenews.database.entities_models.FavNewsEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
+public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
 
     private List<NewEntity> newList;
+    private List<FavNewsEntity> favNewsEntities;
+    private List<String> auxFavs;
+
 
     @NonNull
     @Override
@@ -42,7 +48,22 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
         notifyDataSetChanged();
     }
 
+    public void setFavNewsEntities(List<FavNewsEntity> favNewsEntities){
+        this.favNewsEntities=favNewsEntities;
+        List<String> aux=new ArrayList<>();
+        for(FavNewsEntity x:this.favNewsEntities){
+            aux.add(x.getNewID());
+        }
+        auxFavs=aux;
+        notifyDataSetChanged();
+    }
+
+    public List<FavNewsEntity> getFavNewsList(){
+        return this.favNewsEntities;
+    }
+
     private void bindViews(NewEntity news, ViewHolder holder) {
+        holder.newsID =news.getId();
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getGame());
         if (!(news.getCoverImage() == null)) {
@@ -50,17 +71,29 @@ public class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHold
         } else {
             Picasso.get().load(R.drawable.error_loading).error(R.drawable.error_loading).into(holder.imageView);
         }
+        if(auxFavs.contains(news.getId())){
+            holder.favButton.setImageResource(R.drawable.ic_fav_24dp);
+        }else{
+            holder.favButton.setImageResource(R.drawable.ic_no_fav_24dp);
+        }
     }
+
+    public abstract void onclickFav(View view,String id);
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView title, description;
+        private ImageButton favButton;
+        private String newsID;
+        private int position;
 
         private ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.news_image);
             title = itemView.findViewById(R.id.new_title);
             description = itemView.findViewById(R.id.new_description);
+            favButton=itemView.findViewById(R.id.fav_button);
+            favButton.setOnClickListener(v->onclickFav(v,newsID));
         }
     }
 }
