@@ -14,13 +14,17 @@ import com.google.gson.GsonBuilder;
 import com.pdm00057616.gamenews.API.deserializer.CategoriesDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.PlayerDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
+import com.pdm00057616.gamenews.API.deserializer.UserDeserializer;
 import com.pdm00057616.gamenews.activities.MainActivity;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.database.entities_models.PlayerEntity;
+import com.pdm00057616.gamenews.database.entities_models.UserEntity;
+import com.pdm00057616.gamenews.database.repositories.UserRepository;
 import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
 import com.pdm00057616.gamenews.models.Player;
+import com.pdm00057616.gamenews.models.User;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
@@ -96,7 +100,7 @@ public class ClientRequest {
     }
 
 
-    public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout ... refreshLayout) {
+    public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout... refreshLayout) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
@@ -106,7 +110,7 @@ public class ClientRequest {
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                if (refreshLayout.length>0) {
+                if (refreshLayout.length > 0) {
                     refreshLayout[0].setRefreshing(false);
                 }
                 if (response.isSuccessful()) {
@@ -118,7 +122,7 @@ public class ClientRequest {
 
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
-                if (refreshLayout.length>0) {
+                if (refreshLayout.length > 0) {
                     refreshLayout[0].setRefreshing(false);
                 }
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -148,22 +152,22 @@ public class ClientRequest {
     }
 
 
-    public static void getCategories(String token, CategoryViewModel viewModel){
-        Gson gson=new GsonBuilder()
+    public static void getCategories(String token, CategoryViewModel viewModel) {
+        Gson gson = new GsonBuilder()
                 .registerTypeAdapter(ArrayList.class, new CategoriesDeserializer())
                 .create();
-        Retrofit retrofit=new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        GameNewsAPI service=retrofit.create(GameNewsAPI.class);
-        Call<List<String>> categories=service.getCategories("Beared " + token);
+        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
+        Call<List<String>> categories = service.getCategories("Beared " + token);
         categories.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                 System.out.println(response.code());
-                if (response.body()!=null) {
-                    for(String x:response.body()){
+                if (response.body() != null) {
+                    for (String x : response.body()) {
                         viewModel.insertCategory(new CategoryEntity(x));
                     }
                 }
@@ -177,20 +181,20 @@ public class ClientRequest {
     }
 
 
-    public static void getPlayers(String token, PlayerViewModel viewModel, SwipeRefreshLayout...refresh){
-        Gson gson=new GsonBuilder()
+    public static void getPlayers(String token, PlayerViewModel viewModel, SwipeRefreshLayout... refresh) {
+        Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Player.class, new PlayerDeserializer())
                 .create();
-        Retrofit retrofit=new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(GameNewsAPI.END_POINT)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        GameNewsAPI service=retrofit.create(GameNewsAPI.class);
-        Call<List<Player>> players=service.getPlayers("Beared "+token);
+        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
+        Call<List<Player>> players = service.getPlayers("Beared " + token);
         players.enqueue(new Callback<List<Player>>() {
             @Override
             public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
-                if(response.code()==200){
+                if (response.code() == 200) {
                     for (Player x : response.body()) {
                         System.out.println(x.get_id());
                         PlayerEntity player = new PlayerEntity(
@@ -198,7 +202,7 @@ public class ClientRequest {
                                 x.getBiografia(), x.getGame()
                         );
                         viewModel.insert(player);
-                        if (refresh.length>0) {
+                        if (refresh.length > 0) {
                             refresh[0].setRefreshing(false);
                         }
                     }
@@ -210,5 +214,39 @@ public class ClientRequest {
                 t.printStackTrace();
             }
         });
+    }
+
+
+    public static void getUserInfo(String token, Context context, UserRepository... repository) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(User.class, new UserDeserializer())
+                .create();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GameNewsAPI.END_POINT)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
+        Call<User> userInfo = service.getUserInfo("Beared " + token);
+        userInfo.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                saveUserID(response.body().getId(), context);
+                if (repository.length > 0) {
+                    repository[0].insert(new UserEntity(response.body().getId(), response.body().getUser(), response.body().getPassword()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private static void saveUserID(String id, Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("log", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("id", id);
+        editor.commit();
     }
 }
