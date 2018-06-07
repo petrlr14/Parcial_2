@@ -20,12 +20,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.adapters.AllNewsAdapter;
+import com.pdm00057616.gamenews.database.entities_models.FavNewsEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
+import com.pdm00057616.gamenews.viewmodels.FavNewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 
 import java.lang.reflect.Field;
@@ -38,7 +41,9 @@ public class NewsViewFragment extends Fragment {
     private AllNewsAdapter adapter;
     private GridLayoutManager manager;
     private String aux, category;
-    private NewsViewModel viewModel;
+    private NewsViewModel newsViewModel;
+    private FavNewsViewModel favNewsViewModel;
+
     private SearchView searchView;
     private SwipeRefreshLayout refreshLayout;
     private boolean isCategory;
@@ -73,11 +78,18 @@ public class NewsViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragmet, container, false);
         refreshLayout=view.findViewById(R.id.refresh);
-        refreshLayout.setOnRefreshListener(()->ClientRequest.fetchAllNews(getContext(), viewModel, aux,refreshLayout));
+        refreshLayout.setOnRefreshListener(()->ClientRequest.fetchAllNews(getContext(), newsViewModel, aux,refreshLayout));
         recyclerView = view.findViewById(R.id.recycler_view);
-        adapter = new AllNewsAdapter();
-        viewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-        viewModel.getAllNews().observe(this, this::setList);
+        favNewsViewModel=ViewModelProviders.of(this).get(FavNewsViewModel.class);
+        favNewsViewModel.getFavByUser(getUserID()).observe(this, list->adapter.setFavNewsEntities(list));
+        adapter = new AllNewsAdapter() {
+            @Override
+            public void onclickFav(View v, String id) {
+                addFav(adapter.getFavNewsList(), id, v);
+            }
+        };
+        newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
+        newsViewModel.getAllNews().observe(this, this::setList);
         manager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL,
                 false);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -136,7 +148,7 @@ public class NewsViewFragment extends Fragment {
 
     private void getNewsFromDB(String query) {
         query = "%" + query + "%";
-        viewModel.getNewsByQuery(query)
+        newsViewModel.getNewsByQuery(query)
                 .observe(this, newEntities -> {
                     if (newEntities == null) {
                         return;
@@ -159,6 +171,34 @@ public class NewsViewFragment extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+    private void addFav(List<FavNewsEntity> favNewsEntities, String id, View view){
+        String user_id=getUserID();
+        System.out.println("holi");
+        System.out.println(favNewsEntities.size());
+        if(favNewsEntities.size()>0){
+            for(FavNewsEntity x:favNewsEntities){
+                if(x.getUserID().equals(user_id)&&x.getNewID().equals(id)){
+                    ((ImageButton)view).setImageResource(R.drawable.ic_no_fav_24dp);
+                    favNewsViewModel.delete(user_id, id);
+                    System.out.println(favNewsEntities.size());
+                }else{
+                    favNewsViewModel.insert(user_id, id);
+                    System.out.println("holi");
+                    ((ImageButton)view).setImageResource(R.drawable.ic_fav_24dp);
+                }
+            }
+        }else{
+            favNewsViewModel.insert(user_id, id);
+            System.out.println("holi");
+            ((ImageButton)view).setImageResource(R.drawable.ic_fav_24dp);
+        }
+    }
+
+    private String getUserID(){
+        SharedPreferences preferences=getContext().getSharedPreferences("log", Context.MODE_PRIVATE);
+        return preferences.getString("id", "");
     }
 }
 
