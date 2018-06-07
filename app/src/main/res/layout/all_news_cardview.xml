@@ -33,13 +33,14 @@
                 android:textSize="18sp"
                 android:layout_weight="3" />
 
-            <ImageView
+            <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:background="@null"
                 android:contentDescription="@string/fav_start_description"
-                android:src="@drawable/ic_no_fav_24dp" />
+                android:id="@+id/fav_button"/>
         </LinearLayout>
 
         <TextView
