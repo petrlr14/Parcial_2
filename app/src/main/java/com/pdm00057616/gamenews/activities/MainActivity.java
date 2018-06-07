@@ -17,6 +17,7 @@ import android.view.SubMenu;
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
+import com.pdm00057616.gamenews.database.repositories.UserRepository;
 import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
 import com.pdm00057616.gamenews.fragments.NewsViewFragment;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
@@ -33,12 +34,14 @@ public class MainActivity extends AppCompatActivity {
     private CategoryViewModel categoryViewModel;
     private PlayerViewModel playerViewModel;
     private NewsViewModel newsViewModel;
+    private UserRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isLogged();
         setContentView(R.layout.activity_main);
+        repository=new UserRepository(getApplication());
         playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
         newsViewModel=ViewModelProviders.of(this).get(NewsViewModel.class);
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         ClientRequest.fetchAllNews(this, newsViewModel, getToken());
         ClientRequest.getCategories(getToken(), categoryViewModel);
         ClientRequest.getPlayers(getToken(), playerViewModel);
+        ClientRequest.getUserInfo(getToken(), this);
+        setUserID();
         bindViews();
     }
 
@@ -127,5 +132,9 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
         editor.commit();
         isLogged();
+    }
+
+    private void setUserID(){
+        ClientRequest.getUserInfo(getToken(), this, repository);
     }
 }
