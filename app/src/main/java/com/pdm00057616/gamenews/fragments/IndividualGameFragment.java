@@ -51,7 +51,7 @@ public class IndividualGameFragment extends Fragment {
     }
 
     private void setFragments(){
-        adapter.addFragment(NewsViewFragment.newInstance(true, category), "News");
+        adapter.addFragment(NewsViewFragment.newInstance(1, category), "News");
         adapter.addFragment(TopPlayersFragmet.newInstance(category), "Top Players");
         adapter.addFragment(GameImagesFragment.newInstance(category), "Images");
         viewPager.setAdapter(adapter);

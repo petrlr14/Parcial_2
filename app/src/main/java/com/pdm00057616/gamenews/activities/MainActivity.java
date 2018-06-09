@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private CategoryViewModel categoryViewModel;
     private PlayerViewModel playerViewModel;
-    private NewsViewModel newsViewModel;
     private UserRepository repository;
 
     @Override
@@ -43,17 +42,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         repository=new UserRepository(getApplication());
         playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
-        newsViewModel=ViewModelProviders.of(this).get(NewsViewModel.class);
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
         categoryViewModel
                 .getAllCategories()
                 .observe(this, this::addMenuItems);
-        ClientRequest.fetchAllNews(this, newsViewModel, getToken());
         ClientRequest.getCategories(getToken(), categoryViewModel);
         ClientRequest.getPlayers(getToken(), playerViewModel);
         ClientRequest.getUserInfo(getToken(), this);
         setUserID();
         bindViews();
+        setFirstView();
     }
 
     @Override
@@ -77,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment;
             switch (item.getItemId()) {
                 case R.id.all_news:
-                    fragment=NewsViewFragment.newInstance(false);
+                case R.id.fav_news:
+                    fragment=NewsViewFragment.newInstance(0);
                     break;
                 case R.id.logout:
                     logout();
@@ -136,5 +135,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUserID(){
         ClientRequest.getUserInfo(getToken(), this, repository);
+    }
+
+    private void setFirstView(){
+        navigationView.getMenu().getItem(0).setChecked(true);
+        Fragment fragment=NewsViewFragment.newInstance(0);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_content, fragment)
+                .commit();
+        getSupportActionBar().setTitle(navigationView.getMenu().getItem(0).getTitle());
     }
 }

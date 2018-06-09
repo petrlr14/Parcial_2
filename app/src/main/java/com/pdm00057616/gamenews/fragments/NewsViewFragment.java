@@ -37,6 +37,12 @@ import java.util.List;
 
 public class NewsViewFragment extends Fragment {
 
+
+    private static final int ALL=0;
+    private static final int CATEGORIES=1;
+    private static final int FAV=2;
+
+
     private RecyclerView recyclerView;
     private AllNewsAdapter adapter;
     private GridLayoutManager manager;
@@ -46,13 +52,12 @@ public class NewsViewFragment extends Fragment {
 
     private SearchView searchView;
     private SwipeRefreshLayout refreshLayout;
-    private boolean isCategory;
+    private int fragmentType;
 
-    public static NewsViewFragment newInstance(boolean category, String ...categories) {
+    public static NewsViewFragment newInstance(int tipo,String ...categories) {
 
         Bundle args = new Bundle();
-        args.putBoolean("isCategory", category);
-        System.out.println(categories.length+"asdsadsadsad");
+        args.putInt("fragmentType", tipo);
         if (categories.length>0) {
             args.putString("category", categories[0]);
         }
@@ -67,10 +72,22 @@ public class NewsViewFragment extends Fragment {
         SharedPreferences preferences = getActivity().getSharedPreferences("log", Context.MODE_PRIVATE);
         aux = preferences.getString("token", "");
         setHasOptionsMenu(true);
-        isCategory=getArguments().getBoolean("isCategory");
+        fragmentType =getArguments().getInt("fragmentType");
         if(getArguments().getString("category")!=null){
             category=getArguments().getString("category");
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.search_view_menu, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView = (SearchView) item.getActionView();
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setOnQueryTextListener(onQueryTextListener);
+        setUpSearchView();
+
     }
 
     @Nullable
@@ -89,7 +106,7 @@ public class NewsViewFragment extends Fragment {
             }
         };
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-        newsViewModel.getAllNews().observe(this, this::setList);
+        newsViewModel.getAllNews(getContext(), aux).observe(this, this::setList);
         manager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL,
                 false);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -104,31 +121,20 @@ public class NewsViewFragment extends Fragment {
     }
 
     private void setList(List<NewEntity> list){
-        if (isCategory) {
+        if (fragmentType==CATEGORIES) {
             List<NewEntity> aux=new ArrayList<>();
             for(NewEntity x:list){
-                System.out.println(x.getGame()+"---"+category);
                 if(x.getGame().equals(category)){
                     aux.add(x);
                 }
             }
             adapter.setNewList(aux);
-        }else{
+        }else if(fragmentType==ALL){
             adapter.setNewList(list);
+        }else{
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.search_view_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        searchView = (SearchView) item.getActionView();
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(onQueryTextListener);
-        setUpSearchView();
-
-    }
 
 
     private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
@@ -175,23 +181,18 @@ public class NewsViewFragment extends Fragment {
 
     private void addFav(List<FavNewsEntity> favNewsEntities, String id, View view){
         String user_id=getUserID();
-        System.out.println("holi");
-        System.out.println(favNewsEntities.size());
         if(favNewsEntities.size()>0){
             for(FavNewsEntity x:favNewsEntities){
                 if(x.getUserID().equals(user_id)&&x.getNewID().equals(id)){
                     ((ImageButton)view).setImageResource(R.drawable.ic_no_fav_24dp);
                     favNewsViewModel.delete(user_id, id);
-                    System.out.println(favNewsEntities.size());
                 }else{
                     favNewsViewModel.insert(user_id, id);
-                    System.out.println("holi");
                     ((ImageButton)view).setImageResource(R.drawable.ic_fav_24dp);
                 }
             }
         }else{
             favNewsViewModel.insert(user_id, id);
-            System.out.println("holi");
             ((ImageButton)view).setImageResource(R.drawable.ic_fav_24dp);
         }
     }

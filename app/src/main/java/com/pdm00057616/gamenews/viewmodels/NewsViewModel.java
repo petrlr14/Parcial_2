@@ -3,8 +3,10 @@ package com.pdm00057616.gamenews.viewmodels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.database.repositories.NewRepository;
 
@@ -19,7 +21,7 @@ public class NewsViewModel extends AndroidViewModel {
         repository = new NewRepository(application);
     }
 
-    public LiveData<List<NewEntity>> getAllNews() {
+    public LiveData<List<NewEntity>> getAllNews(Context context, String token) {
         return repository.getAllNews();
     }
 
@@ -27,7 +29,7 @@ public class NewsViewModel extends AndroidViewModel {
         return repository.getNewsByQuery(query);
     }
 
-    public LiveData<List<NewEntity>> getNewsByGame(String game){
+    public LiveData<List<NewEntity>> getNewsByGame(String game) {
         return repository.getNewsByGame(game);
     }
 
