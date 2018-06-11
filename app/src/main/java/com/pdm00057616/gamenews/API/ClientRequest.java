@@ -19,8 +19,6 @@ import com.pdm00057616.gamenews.activities.MainActivity;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.database.entities_models.PlayerEntity;
-import com.pdm00057616.gamenews.database.entities_models.UserEntity;
-import com.pdm00057616.gamenews.database.repositories.UserRepository;
 import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
 import com.pdm00057616.gamenews.models.Player;
@@ -145,8 +143,8 @@ public class ClientRequest {
         for (New x : list) {
             NewEntity newEntity = new NewEntity(
                     x.get_id(), x.getTitle(), x.getCoverImage(), x.getDescription(),
-                    x.getBody(), x.getGame(), x.getCreated_date()
-            );
+                    x.getBody(), x.getGame(), x.getCreated_date(),
+                    0);
             viewModel.insert(newEntity);
         }
     }
@@ -217,7 +215,7 @@ public class ClientRequest {
     }
 
 
-    public static void getUserInfo(String token, Context context, UserRepository... repository) {
+    public static void getUserInfo(String token, Context context, NewsViewModel repository) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(User.class, new UserDeserializer())
                 .create();
@@ -230,15 +228,21 @@ public class ClientRequest {
         userInfo.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                saveUserID(response.body().getId(), context);
-                if (repository.length > 0) {
-                    repository[0].insert(new UserEntity(response.body().getId(), response.body().getUser(), response.body().getPassword()));
+                if (response.isSuccessful()) {
+                    saveUserID(response.body().getId(), context);
+                    System.out.println(response.body().getFavNews().size());
+                    for(New x:response.body().getFavNews()){
+                        repository.insert(new NewEntity(x.get_id(), x.getTitle(), x.getCoverImage(),
+                                x.getDescription(), x.getBody(), x.getGame(), x.getCreated_date(), 1));
+                    }
+                }else{
+                    Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
@@ -248,5 +252,29 @@ public class ClientRequest {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("id", id);
         editor.commit();
+    }
+
+
+
+    public static void pushFav(String token, String userID, String newID){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GameNewsAPI.END_POINT)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
+        Call<Void> call=service.pushFav("Beared "+token,newID, userID);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                System.out.println(response.code());
+                System.out.println(response.message());
+                System.out.println(response.errorBody());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 }

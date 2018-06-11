@@ -13,6 +13,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface GameNewsAPI {
 
@@ -35,6 +36,11 @@ public interface GameNewsAPI {
     Call<List<String>> getCategories(@Header("Authorization") String auth);
 
     @GET("/players")
-    Call<List<Player>> getPlayers(@Header("Authorization")String auth);
+    Call<List<Player>> getPlayers(@Header("Authorization") String auth);
 
+    @FormUrlEncoded
+    @POST("/users/{user_id}/fav")
+    Call<Void> pushFav(@Header("Authorization")String auth,
+                       @Field("new") String fav,
+                       @Path("user_id") String user_id);
 }

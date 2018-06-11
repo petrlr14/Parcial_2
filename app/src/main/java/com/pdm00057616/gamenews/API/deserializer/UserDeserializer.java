@@ -21,8 +21,9 @@ public class UserDeserializer implements JsonDeserializer<User>{
         user.setId(userObject.get("_id").getAsString());
         user.setUser(userObject.get("user").getAsString());
         user.setPassword(userObject.get("password").getAsString());
-        user.setDate(userObject.get("crated_date").getAsString());
-
+        if (userObject.get("avatar")!=null) {
+            user.setAvatar(userObject.get("avatar").getAsString());
+        }
         JsonElement newsJsonElement=userObject.get("favoriteNews");
         JsonArray newsJsonArray=newsJsonElement.getAsJsonArray();
         user.setFavNews(getFavNews(newsJsonArray));
