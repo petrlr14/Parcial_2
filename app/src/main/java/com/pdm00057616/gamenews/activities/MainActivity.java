@@ -12,12 +12,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.SubMenu;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
-import com.pdm00057616.gamenews.database.repositories.UserRepository;
 import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
 import com.pdm00057616.gamenews.fragments.NewsViewFragment;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
@@ -33,14 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private CategoryViewModel categoryViewModel;
     private PlayerViewModel playerViewModel;
-    private UserRepository repository;
+    private NewsViewModel newsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isLogged();
         setContentView(R.layout.activity_main);
-        repository=new UserRepository(getApplication());
+        newsViewModel=ViewModelProviders.of(this).get(NewsViewModel.class);
         playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
         categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
         categoryViewModel
@@ -48,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
                 .observe(this, this::addMenuItems);
         ClientRequest.getCategories(getToken(), categoryViewModel);
         ClientRequest.getPlayers(getToken(), playerViewModel);
-        ClientRequest.getUserInfo(getToken(), this);
         setUserID();
         bindViews();
         setFirstView();
@@ -75,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment;
             switch (item.getItemId()) {
                 case R.id.all_news:
-                case R.id.fav_news:
                     fragment=NewsViewFragment.newInstance(0);
+                    break;
+                case R.id.fav_news:
+                    fragment=NewsViewFragment.newInstance(2);
                     break;
                 case R.id.logout:
                     logout();
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUserID(){
-        ClientRequest.getUserInfo(getToken(), this, repository);
+        ClientRequest.getUserInfo(getToken(), this, newsViewModel);
     }
 
     private void setFirstView(){
