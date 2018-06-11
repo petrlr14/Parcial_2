@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
+import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.API.GameNewsAPI;
 import com.pdm00057616.gamenews.database.AppDB;
 import com.pdm00057616.gamenews.database.daos.NewDao;
@@ -34,6 +35,10 @@ public class NewRepository {
         return newDao.getNewsByGame(game);
     }
 
+    public void update(int fav, String id, String token, String user_id){
+        new updateAsyncTask(newDao, id, user_id, token).execute(fav);
+    }
+
     public void insert(NewEntity news){
         new insertAsyncTask(newDao).execute(news);
     }
@@ -49,6 +54,28 @@ public class NewRepository {
         @Override
         protected Void doInBackground(NewEntity... news) {
             newDao.insertNew(news[0]);
+            return null;
+        }
+    }
+
+    private static class updateAsyncTask extends AsyncTask<Integer, Void, Void>{
+
+        NewDao newDao;
+        String id, user_id, token;
+
+        public updateAsyncTask(NewDao newDao, String id, String user_id, String token) {
+            this.newDao = newDao;
+            this.id=id;
+            this.user_id=user_id;
+            this.token=token;
+        }
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            newDao.updateNew(integers[0], id);
+            if(integers[0]==1){
+                ClientRequest.pushFav(token, user_id, id);
+            }
             return null;
         }
     }

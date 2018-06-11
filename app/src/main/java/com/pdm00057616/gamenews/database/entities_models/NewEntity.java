@@ -5,8 +5,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.util.Comparator;
-
 @Entity
 public class NewEntity {
 
@@ -14,8 +12,12 @@ public class NewEntity {
     @PrimaryKey
     @ColumnInfo(name = "_id")
     private String id;
+    private String title, coverImage, description, body, game;
+    @ColumnInfo(name = "crate_date")
+    private String createDate;
+    private int isFav;
 
-    public NewEntity(@NonNull String id, String title, String coverImage, String description, String body, String game, String createDate) {
+    public NewEntity(@NonNull String id, String title, String coverImage, String description, String body, String game, String createDate, int isFav) {
         this.id = id;
         this.title = title;
         this.coverImage = coverImage;
@@ -23,11 +25,8 @@ public class NewEntity {
         this.body = body;
         this.game = game;
         this.createDate = createDate;
+        this.isFav = isFav;
     }
-
-    private String title, coverImage, description, body, game;
-    @ColumnInfo(name = "crate_date")
-    private String createDate;
 
     @NonNull
     public String getId() {
@@ -85,5 +84,13 @@ public class NewEntity {
 
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
+    }
+
+    public int getIsFav() {
+        return isFav;
+    }
+
+    public void setIsFav(int isFav) {
+        this.isFav = isFav;
     }
 }

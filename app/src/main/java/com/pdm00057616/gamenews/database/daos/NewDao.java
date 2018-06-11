@@ -28,4 +28,7 @@ public interface NewDao {
 
     @Query("SELECT*FROM NewEntity WHERE game =:game")
     LiveData<List<NewEntity>> getNewsByGame(String game);
+
+    @Query("UPDATE NewEntity SET isFav=:value WHERE _id=:id")
+    void updateNew(int value, String id);
 }
