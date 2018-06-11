@@ -65,9 +65,9 @@ public class NewRepository {
 
         public updateAsyncTask(NewDao newDao, String id, String user_id, String token) {
             this.newDao = newDao;
-            this.id=id;
-            this.user_id=user_id;
-            this.token=token;
+            this.id=token;
+            this.user_id=id;
+            this.token=user_id;
         }
 
         @Override

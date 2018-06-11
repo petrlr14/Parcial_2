@@ -262,7 +262,7 @@ public class ClientRequest {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<Void> call=service.pushFav("Beared "+token,newID, userID);
+        Call<Void> call=service.pushFav("Bearer "+token,newID, userID);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
