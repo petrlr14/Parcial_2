@@ -20,15 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.adapters.AllNewsAdapter;
-import com.pdm00057616.gamenews.database.entities_models.FavNewsEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
-import com.pdm00057616.gamenews.viewmodels.FavNewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 
 import java.lang.reflect.Field;
@@ -48,11 +45,12 @@ public class NewsViewFragment extends Fragment {
     private GridLayoutManager manager;
     private String aux, category;
     private NewsViewModel newsViewModel;
-    private FavNewsViewModel favNewsViewModel;
 
     private SearchView searchView;
     private SwipeRefreshLayout refreshLayout;
     private int fragmentType;
+
+    private TextView noFavorites;
 
     public static NewsViewFragment newInstance(int tipo,String ...categories) {
 
@@ -95,18 +93,17 @@ public class NewsViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragmet, container, false);
         refreshLayout=view.findViewById(R.id.refresh);
+        noFavorites=view.findViewById(R.id.no_favorites);
         refreshLayout.setOnRefreshListener(()->ClientRequest.fetchAllNews(getContext(), newsViewModel, aux,refreshLayout));
         recyclerView = view.findViewById(R.id.recycler_view);
-        favNewsViewModel=ViewModelProviders.of(this).get(FavNewsViewModel.class);
-        favNewsViewModel.getFavByUser(getUserID()).observe(this, list->adapter.setFavNewsEntities(list));
         adapter = new AllNewsAdapter() {
             @Override
-            public void onclickFav(View v, String id) {
-                addFav(adapter.getFavNewsList(), id, v);
+            public void onclickFav(View v, String id, int current) {
+                addFav(id, v, current);
             }
         };
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-        newsViewModel.getAllNews(getContext(), aux).observe(this, this::setList);
+        newsViewModel.getAllNews().observe(this, this::setList);
         manager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL,
                 false);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -119,23 +116,6 @@ public class NewsViewFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         return view;
     }
-
-    private void setList(List<NewEntity> list){
-        if (fragmentType==CATEGORIES) {
-            List<NewEntity> aux=new ArrayList<>();
-            for(NewEntity x:list){
-                if(x.getGame().equals(category)){
-                    aux.add(x);
-                }
-            }
-            adapter.setNewList(aux);
-        }else if(fragmentType==ALL){
-            adapter.setNewList(list);
-        }else{
-        }
-    }
-
-
 
     private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
@@ -179,22 +159,27 @@ public class NewsViewFragment extends Fragment {
 
     }
 
-    private void addFav(List<FavNewsEntity> favNewsEntities, String id, View view){
-        String user_id=getUserID();
-        if(favNewsEntities.size()>0){
-            for(FavNewsEntity x:favNewsEntities){
-                if(x.getUserID().equals(user_id)&&x.getNewID().equals(id)){
-                    ((ImageButton)view).setImageResource(R.drawable.ic_no_fav_24dp);
-                    favNewsViewModel.delete(user_id, id);
-                }else{
-                    favNewsViewModel.insert(user_id, id);
-                    ((ImageButton)view).setImageResource(R.drawable.ic_fav_24dp);
+    private void setList(List<NewEntity> news){
+        if(fragmentType==FAV){
+            List<NewEntity>favs=new ArrayList<>();
+            for(NewEntity x:news){
+                if(x.getIsFav()==1){
+                    favs.add(x);
                 }
             }
+            adapter.setNewList(favs);
+            if(favs.size()==0){
+                noFavorites.setVisibility(View.VISIBLE);
+            }else{
+                noFavorites.setVisibility(View.GONE);
+            }
         }else{
-            favNewsViewModel.insert(user_id, id);
-            ((ImageButton)view).setImageResource(R.drawable.ic_fav_24dp);
+            adapter.setNewList(news);
         }
+    }
+
+    private void addFav(String id, View view, int current){
+        newsViewModel.update(((current==0)?1:0), id, getUserID(), aux);
     }
 
     private String getUserID(){
