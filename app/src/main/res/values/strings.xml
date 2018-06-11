@@ -21,4 +21,7 @@
     <string name="all_news_option">All news</string>
     <string name="favourites_news_option">Favourites news</string>
     <string name="logout_option">Logout</string>
+
+    <string name="date_string">Date</string>
+    <string name="no_favourites_yet_label">No favourites yet</string>
 </resources>
