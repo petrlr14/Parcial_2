@@ -72,7 +72,6 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
     }
 
     private void setfav(int fav, ViewHolder holder) {
-        System.out.println(fav+"   fav");
         holder.favButton.setImageResource((fav == 0) ? R.drawable.ic_no_fav_24dp : R.drawable.ic_fav_24dp);
     }
 

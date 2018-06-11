@@ -65,16 +65,16 @@ public class NewRepository {
 
         public updateAsyncTask(NewDao newDao, String id, String user_id, String token) {
             this.newDao = newDao;
-            this.id=token;
-            this.user_id=id;
-            this.token=user_id;
+            this.token=token;
+            this.id=id;
+            this.user_id=user_id;
         }
 
         @Override
         protected Void doInBackground(Integer... integers) {
             newDao.updateNew(integers[0], id);
             if(integers[0]==1){
-                ClientRequest.pushFav(token, user_id, id);
+                ClientRequest.pushFav(user_id, id, token);
             }
             return null;
         }

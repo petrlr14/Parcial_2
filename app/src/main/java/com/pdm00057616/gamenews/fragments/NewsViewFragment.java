@@ -2,6 +2,7 @@ package com.pdm00057616.gamenews.fragments;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
+import com.pdm00057616.gamenews.activities.DetailsActivity;
 import com.pdm00057616.gamenews.adapters.AllNewsAdapter;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
@@ -50,6 +52,8 @@ public class NewsViewFragment extends Fragment {
     private SwipeRefreshLayout refreshLayout;
     private int fragmentType;
 
+    private Context context;
+
     private TextView noFavorites;
 
     public static NewsViewFragment newInstance(int tipo,String ...categories) {
@@ -74,6 +78,7 @@ public class NewsViewFragment extends Fragment {
         if(getArguments().getString("category")!=null){
             category=getArguments().getString("category");
         }
+        context=getContext();
     }
 
     @Override
@@ -100,6 +105,10 @@ public class NewsViewFragment extends Fragment {
             @Override
             public void onclickFav(View v, String id, int current) {
                 addFav(id, v, current);
+            }
+            @Override
+            public void onClickDetails(String titulo, String descripcion, String contenido, String image) {
+                startDetails(titulo, descripcion, contenido, image);
             }
         };
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
@@ -185,6 +194,15 @@ public class NewsViewFragment extends Fragment {
     private String getUserID(){
         SharedPreferences preferences=getContext().getSharedPreferences("log", Context.MODE_PRIVATE);
         return preferences.getString("id", "");
+    }
+
+    private void startDetails(String titulo, String descripcion, String contenido, String image){
+        Intent intent=new Intent(getContext(), DetailsActivity.class);
+        intent.putExtra("titulo", descripcion);
+        intent.putExtra("descripcion", descripcion);
+        intent.putExtra("contenido", contenido);
+        intent.putExtra("image", image);
+        context.startActivity(intent);
     }
 }
 
