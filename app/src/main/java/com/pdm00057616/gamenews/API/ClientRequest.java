@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,32 +46,53 @@ import static android.view.View.GONE;
 
 public class ClientRequest {
 
+    private static String massage;
+
+    private static GameNewsAPI getClient(Gson gson, Context...context) {
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor((chain) -> {
+                    okhttp3.Response response = chain.proceed(chain.request());
+
+                    if (response.code() == 401) {
+                        if(context.length>0){
+                            massage=response.body().string();
+                        }
+                        return chain.proceed(chain.request());
+                    }
+                    return response;
+                }).build();
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(GameNewsAPI.END_POINT)
+                .client(httpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson));
+        Retrofit retrofit = builder.build();
+        return retrofit.create(GameNewsAPI.class);
+    }
+
     public static void login(String user, String password, Activity context, RelativeLayout relativeLayout) {
-        relativeLayout.setVisibility(View.VISIBLE);
+        relativeLayout.setVisibility(View.GONE);
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Login.class, new TokenDeserializer())
                 .create();
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(GameNewsAPI.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create(gson));
-        Retrofit retrofit = builder.build();
-        GameNewsAPI gameNewsAPI = retrofit.create(GameNewsAPI.class);
-        Call<Login> call = gameNewsAPI.
+        Call<Login> call = getClient(gson, context).
                 login(user, password);
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
                 System.out.println(response.code());
-                if (response.isSuccessful() && response.body().isOKResponse()) {
+                if (response.code() == 200) {
                     Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
                     saveToken(context, response.body().getToken());
                     startMain(context);
-                } else if (!response.body().isOKResponse()) {
-                    relativeLayout.setVisibility(View.GONE);
-                    Toast.makeText(context, response.body().getToken(), Toast.LENGTH_SHORT).show();
-                } else {
-                    relativeLayout.setVisibility(View.GONE);
-                    Toast.makeText(context, "Something weird happend", Toast.LENGTH_SHORT).show();
+                }else if(response.code()==401){
+                    if (massage.matches("Contraseña")) {
+                        relativeLayout.setVisibility(View.VISIBLE);
+                        Toast.makeText(context, "Contraseña", Toast.LENGTH_SHORT).show();
+                    }else{
+                        relativeLayout.setVisibility(View.VISIBLE);
+                        Toast.makeText(context, "Usuario", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -99,12 +121,7 @@ public class ClientRequest {
 
 
     public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout... refreshLayout) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GameNewsAPI.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create(new Gson()))
-                .build();
-        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<List<New>> news = service.getNews("Beared " + token);
+        Call<List<New>> news = getClient(new Gson()).getNews("Beared " + token);
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
@@ -154,12 +171,7 @@ public class ClientRequest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(ArrayList.class, new CategoriesDeserializer())
                 .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GameNewsAPI.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<List<String>> categories = service.getCategories("Beared " + token);
+        Call<List<String>> categories = getClient(gson).getCategories("Beared " + token);
         categories.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
@@ -183,12 +195,7 @@ public class ClientRequest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Player.class, new PlayerDeserializer())
                 .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GameNewsAPI.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<List<Player>> players = service.getPlayers("Beared " + token);
+        Call<List<Player>> players = getClient(gson).getPlayers("Beared " + token);
         players.enqueue(new Callback<List<Player>>() {
             @Override
             public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
@@ -219,23 +226,18 @@ public class ClientRequest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(User.class, new UserDeserializer())
                 .create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GameNewsAPI.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<User> userInfo = service.getUserInfo("Beared " + token);
+        Call<User> userInfo = getClient(gson).getUserInfo("Beared " + token);
         userInfo.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     saveUserID(response.body().getId(), context);
                     System.out.println(response.body().getFavNews().size());
-                    for(New x:response.body().getFavNews()){
+                    for (New x : response.body().getFavNews()) {
                         repository.insert(new NewEntity(x.get_id(), x.getTitle(), x.getCoverImage(),
                                 x.getDescription(), x.getBody(), x.getGame(), x.getCreated_date(), 1));
                     }
-                }else{
+                } else {
                     Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -255,14 +257,8 @@ public class ClientRequest {
     }
 
 
-
-    public static void pushFav(String token, String userID, String newID){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GameNewsAPI.END_POINT)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        GameNewsAPI service = retrofit.create(GameNewsAPI.class);
-        Call<Void> call=service.pushFav("Bearer "+token,newID, userID);
+    public static void pushFav(String token, String userID, String newID) {
+        Call<Void> call = getClient(new Gson()).pushFav("Bearer " + token, newID, userID);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
