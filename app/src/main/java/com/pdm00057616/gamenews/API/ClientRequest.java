@@ -79,7 +79,7 @@ public class ClientRequest {
                 System.out.println(response.code());
                 if (response.code() == 200) {
                     Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
-                    saveToken(context, response.body().getToken());
+                    SharedPreferencesUtils.saveToken(context, response.body().getToken());
                     startMain(context);
                 } else if (response.code() == 401) {
                     if (massage.matches("Contraseña")) {
@@ -110,12 +110,7 @@ public class ClientRequest {
         });
     }
 
-    private static void saveToken(Context context, String token) {
-        SharedPreferences preferences = context.getSharedPreferences("log", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("token", token);
-        editor.commit();
-    }
+
 
     private static void startMain(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));

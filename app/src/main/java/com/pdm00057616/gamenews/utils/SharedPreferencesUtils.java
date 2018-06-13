@@ -13,4 +13,11 @@ public class SharedPreferencesUtils {
         editor.apply();
     }
 
+    public static void saveToken(Context context, String token) {
+        SharedPreferences preferences = context.getSharedPreferences("log", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("token", token);
+        editor.commit();
+    }
+
 }
