@@ -23,6 +23,7 @@ import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
 import com.pdm00057616.gamenews.models.Player;
 import com.pdm00057616.gamenews.models.User;
+import com.pdm00057616.gamenews.utils.SharedPreferencesUtils;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
@@ -42,21 +43,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static android.view.View.GONE;
-
 public class ClientRequest {
 
     private static String massage;
 
-    private static GameNewsAPI getClient(Gson gson, Context...context) {
+    private static GameNewsAPI getClient(Gson gson) {
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor((chain) -> {
                     okhttp3.Response response = chain.proceed(chain.request());
 
                     if (response.code() == 401) {
-                        if(context.length>0){
-                            massage=response.body().string();
-                        }
+                        massage = response.body().string();
                         return chain.proceed(chain.request());
                     }
                     return response;
@@ -75,7 +72,7 @@ public class ClientRequest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Login.class, new TokenDeserializer())
                 .create();
-        Call<Login> call = getClient(gson, context).
+        Call<Login> call = getClient(gson).
                 login(user, password);
         call.enqueue(new Callback<Login>() {
             @Override
@@ -85,14 +82,17 @@ public class ClientRequest {
                     Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
                     saveToken(context, response.body().getToken());
                     startMain(context);
-                }else if(response.code()==401){
+                } else if (response.code() == 401) {
                     if (massage.matches("Contraseña")) {
                         relativeLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(context, "Contraseña", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         relativeLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(context, "Usuario", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    relativeLayout.setVisibility(View.VISIBLE);
+                    System.out.println("something");
                 }
             }
 
@@ -100,7 +100,11 @@ public class ClientRequest {
             public void onFailure(Call<Login> call, Throwable t) {
                 if (t instanceof SocketTimeoutException) {
                     Toast.makeText(context, "Time out bitch", Toast.LENGTH_SHORT).show();
-                    relativeLayout.setVisibility(GONE);
+                    relativeLayout.setVisibility(View.VISIBLE);
+                    t.printStackTrace();
+                } else {
+                    relativeLayout.setVisibility(View.VISIBLE);
+                    Toast.makeText(context, "Something weird happend", Toast.LENGTH_SHORT).show();
                     t.printStackTrace();
                 }
             }
@@ -175,7 +179,6 @@ public class ClientRequest {
         categories.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                System.out.println(response.code());
                 if (response.body() != null) {
                     for (String x : response.body()) {
                         viewModel.insertCategory(new CategoryEntity(x));
@@ -201,7 +204,6 @@ public class ClientRequest {
             public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
                 if (response.code() == 200) {
                     for (Player x : response.body()) {
-                        System.out.println(x.get_id());
                         PlayerEntity player = new PlayerEntity(
                                 x.get_id(), x.getAvatar(), x.getName(),
                                 x.getBiografia(), x.getGame()
@@ -231,8 +233,7 @@ public class ClientRequest {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
-                    saveUserID(response.body().getId(), context);
-                    System.out.println(response.body().getFavNews().size());
+                    SharedPreferencesUtils.saveUserID(response.body().getId(), context);
                     for (New x : response.body().getFavNews()) {
                         repository.insert(new NewEntity(x.get_id(), x.getTitle(), x.getCoverImage(),
                                 x.getDescription(), x.getBody(), x.getGame(), x.getCreated_date(), 1));
@@ -249,13 +250,6 @@ public class ClientRequest {
         });
     }
 
-    private static void saveUserID(String id, Context context) {
-        SharedPreferences preferences = context.getSharedPreferences("log", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("id", id);
-        editor.commit();
-    }
-
 
     public static void pushFav(String token, String userID, String newID) {
         Call<Void> call = getClient(new Gson()).pushFav("Bearer " + token, newID, userID);
@@ -263,13 +257,14 @@ public class ClientRequest {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 System.out.println(response.code());
-                System.out.println(response.message());
-                System.out.println(response.errorBody());
+                if (response.code() == 200) {
+                    System.out.println("Exito");
+                }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
