@@ -36,19 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isLogged();
-        setContentView(R.layout.activity_main);
-        newsViewModel=ViewModelProviders.of(this).get(NewsViewModel.class);
-        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
-        categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
-        categoryViewModel
-                .getAllCategories()
-                .observe(this, this::addMenuItems);
-        ClientRequest.getCategories(getToken(), categoryViewModel);
-        ClientRequest.getPlayers(getToken(), playerViewModel);
-        setUserID();
-        bindViews();
-        setFirstView();
+        bindAll();
     }
 
     @Override
@@ -72,20 +60,20 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment;
             switch (item.getItemId()) {
                 case R.id.all_news:
-                    fragment=NewsViewFragment.newInstance(0);
+                    fragment = NewsViewFragment.newInstance(0);
                     break;
                 case R.id.fav_news:
-                    fragment=NewsViewFragment.newInstance(2);
+                    fragment = NewsViewFragment.newInstance(2);
                     break;
                 case R.id.logout:
                     logout();
-                    fragment=null;
+                    fragment = null;
                     break;
                 default:
                     fragment = IndividualGameFragment.newInstance(item.getTitle().toString().toLowerCase());
                     break;
             }
-            if (fragment!=null) {
+            if (fragment != null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.frame_content, fragment)
                         .commit();
@@ -108,11 +96,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void isLogged() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);
-        if (!sharedPreferences.contains("token")) {
+    private void bindAll(){
+        if (isLogged()) {
+            setContentView(R.layout.activity_main);
+            newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
+            playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+            categoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
+            categoryViewModel
+                    .getAllCategories()
+                    .observe(this, this::addMenuItems);
+            ClientRequest.getCategories(getToken(), categoryViewModel);
+            ClientRequest.getPlayers(getToken(), playerViewModel);
+            ClientRequest.getCategories(getToken(), categoryViewModel);
+            setUserID();
+            bindViews();
+            setFirstView();
+        } else {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+        }
+    }
+
+
+    private boolean isLogged() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);
+        if (!sharedPreferences.contains("token")) {
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -124,21 +135,21 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
-    private void logout(){
-        SharedPreferences preferences=this.getSharedPreferences("log", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor=preferences.edit();
+    private void logout() {
+        SharedPreferences preferences = this.getSharedPreferences("log", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.commit();
         isLogged();
     }
 
-    private void setUserID(){
+    private void setUserID() {
         ClientRequest.getUserInfo(getToken(), this, newsViewModel);
     }
 
-    private void setFirstView(){
+    private void setFirstView() {
         navigationView.getMenu().getItem(0).setChecked(true);
-        Fragment fragment=NewsViewFragment.newInstance(0);
+        Fragment fragment = NewsViewFragment.newInstance(0);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frame_content, fragment)
                 .commit();
