@@ -51,8 +51,7 @@ public class ClientRequest {
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor((chain) -> {
                     okhttp3.Response response = chain.proceed(chain.request());
-
-                    if (response.code() == 401) {
+                    if (response.code() != 200) {
                         massage = response.body().string();
                         return chain.proceed(chain.request());
                     }
@@ -136,7 +135,7 @@ public class ClientRequest {
                     setListNewEntity(response.body(), viewModel);
                     Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
                 } else
-                    Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, massage, Toast.LENGTH_SHORT).show();
             }
 
             @Override
