@@ -32,6 +32,13 @@
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@id/date_text"
+            android:visibility="visible"/>
+
         <ImageView
             android:id="@+id/news_image"
             android:layout_width="match_parent"

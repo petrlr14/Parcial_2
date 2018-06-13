@@ -8,19 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
-import com.pdm00057616.gamenews.models.New;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.util.List;
 
 public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
 
     private List<NewEntity> newList;
-
+    private Transformation transformation;
     private Context context;
 
     @NonNull
@@ -53,20 +55,41 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getDescription());
         holder.currentFav = news.getIsFav();
-        String[] dateArray=news.getCreateDate().split("T");
-        String date=context.getResources().getString(R.string.date_string)+": "+dateArray[0];
+        holder.progressBar.setVisibility(View.VISIBLE);
+        String[] dateArray = news.getCreateDate().split("T");
+        String date = context.getResources().getString(R.string.date_string) + ": " + dateArray[0];
         holder.date.setText(date);
         setfav(holder.currentFav, holder);
         if (!(news.getCoverImage() == null)) {
             Picasso.get().load(news.getCoverImage())
                     .error(R.drawable.error_loading)
-                    .into(holder.imageView);
+                    .into(holder.imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            holder.progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            holder.progressBar.setVisibility(View.GONE);
+                        }
+                    });
 
         } else {
             Picasso.get()
                     .load(R.drawable.error_loading)
                     .error(R.drawable.error_loading)
-                    .into(holder.imageView);
+                    .into(holder.imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            holder.progressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            holder.progressBar.setVisibility(View.GONE);
+                        }
+                    });
         }
         fillInfo(holder, news);
     }
@@ -75,11 +98,11 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
         holder.favButton.setImageResource((fav == 0) ? R.drawable.ic_no_fav_24dp : R.drawable.ic_fav_24dp);
     }
 
-    private void fillInfo(ViewHolder holder, NewEntity news){
-        holder.titulo=news.getTitle();
-        holder.descripcion=news.getDescription();
-        holder.contenido=news.getBody();
-        holder.image=news.getCoverImage();
+    private void fillInfo(ViewHolder holder, NewEntity news) {
+        holder.titulo = news.getTitle();
+        holder.descripcion = news.getDescription();
+        holder.contenido = news.getBody();
+        holder.image = news.getCoverImage();
     }
 
     public abstract void onclickFav(View view, String id, int currentFav);
@@ -91,6 +114,7 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
         private TextView title, description, date;
         private ImageButton favButton;
         private String newsID, titulo, descripcion, contenido, image;
+        private ProgressBar progressBar;
         private int currentFav;
 
         private ViewHolder(View itemView) {
@@ -98,10 +122,11 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
             imageView = itemView.findViewById(R.id.news_image);
             title = itemView.findViewById(R.id.new_title);
             description = itemView.findViewById(R.id.new_description);
-            date=itemView.findViewById(R.id.date_text);
+            date = itemView.findViewById(R.id.date_text);
+            progressBar = itemView.findViewById(R.id.progress_bar);
             favButton = itemView.findViewById(R.id.fav_button);
             favButton.setOnClickListener(v -> onclickFav(v, newsID, currentFav));
-            itemView.setOnClickListener(v->onClickDetails(titulo, descripcion, contenido, image));
+            itemView.setOnClickListener(v -> onClickDetails(titulo, descripcion, contenido, image));
         }
     }
 }
