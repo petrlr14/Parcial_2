@@ -20,9 +20,6 @@ allprojects {
         google()
         jcenter()
     }
-    dependencies{
-        'com.github.bumptech.glide:compiler:4.7.1'
-    }
 }
 
 task clean(type: Delete) {
