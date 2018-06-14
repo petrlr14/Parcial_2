@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -12,12 +14,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
 import com.pdm00057616.gamenews.fragments.NewsViewFragment;
+import com.pdm00057616.gamenews.utils.ClearCache;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
@@ -105,10 +109,11 @@ public class MainActivity extends AppCompatActivity {
             categoryViewModel
                     .getAllCategories()
                     .observe(this, this::addMenuItems);
-            ClientRequest.getCategories(getToken(), categoryViewModel);
-            ClientRequest.getPlayers(getToken(), playerViewModel);
-            ClientRequest.getCategories(getToken(), categoryViewModel);
-            setUserID();
+            if(isNetworkAvailable()){
+                firstFetch();
+            }else{
+                Toast.makeText(this, "No con available, data from cache loadin", Toast.LENGTH_SHORT).show();
+            }
             bindViews();
             setFirstView();
         } else {
@@ -140,12 +145,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.commit();
+        newsViewModel.delete();
         startActivity(new Intent(this, LoginActivity.class));
+        ClearCache.Clear(this.getApplicationContext());
         finish();
-    }
-
-    private void setUserID() {
-        ClientRequest.getUserInfo(getToken(), this, newsViewModel);
     }
 
     private void setFirstView() {
@@ -155,5 +158,27 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.frame_content, fragment)
                 .commit();
         getSupportActionBar().setTitle(navigationView.getMenu().getItem(0).getTitle());
+    }
+
+    private boolean isNetworkAvailable(){
+        boolean wifi=false, mobile=false;
+        ConnectivityManager manager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] networkInfo=manager.getAllNetworkInfo();
+        for (NetworkInfo info : networkInfo) {
+            if(info.getTypeName().equals("WIFI"))
+                if(info.isConnected())
+                    wifi=true;
+            if(info.getTypeName().equals("MOBILE"))
+                if (info.isConnected())
+                    mobile=true;
+        }
+        return wifi||mobile;
+    }
+
+    private void firstFetch(){
+        ClientRequest.fetchAllNews(this, newsViewModel, getToken());
+        ClientRequest.getCategories(getToken(), categoryViewModel);
+        ClientRequest.getPlayers(getToken(), playerViewModel);
+        ClientRequest.getUserInfo(getToken(), this, newsViewModel);
     }
 }
