@@ -182,6 +182,14 @@ public class NewsViewFragment extends Fragment {
             }else{
                 noFavorites.setVisibility(View.GONE);
             }
+        }else if(fragmentType==CATEGORIES){
+            List<NewEntity>category=new ArrayList<>();
+            for (NewEntity newEntity : news) {
+                if (newEntity.getGame().equals(this.category)){
+                    category.add(newEntity);
+                }
+            }
+            adapter.setNewList(category);
         }else{
             adapter.setNewList(news);
         }
