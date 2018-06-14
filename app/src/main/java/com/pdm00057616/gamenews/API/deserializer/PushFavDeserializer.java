@@ -7,7 +7,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-public class PushFav implements JsonDeserializer<String> {
+public class PushFavDeserializer implements JsonDeserializer<String> {
     @Override
     public String deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         return json.getAsJsonObject().get("success").getAsString();

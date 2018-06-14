@@ -7,7 +7,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-public class DeleteFav implements JsonDeserializer<String>{
+public class DeleteFavDeserializer implements JsonDeserializer<String>{
 
 
     @Override
