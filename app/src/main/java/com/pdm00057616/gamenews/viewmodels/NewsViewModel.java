@@ -32,8 +32,8 @@ public class NewsViewModel extends AndroidViewModel {
         return repository.getNewsByGame(game);
     }
 
-    public void update(int fav, String id, String user, String token) {
-        repository.update(fav, id, user, token);
+    public void update(int fav, String id, String token) {
+        repository.update(fav, id, token);
     }
 
     public void insert(NewEntity news) {

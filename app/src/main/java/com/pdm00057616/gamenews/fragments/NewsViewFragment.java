@@ -188,7 +188,7 @@ public class NewsViewFragment extends Fragment {
     }
 
     private void addFav(String id, View view, int current){
-        newsViewModel.update(((current==0)?1:0), id, getUserID(), aux);
+        newsViewModel.update(((current==0)?1:0), id, aux);
     }
 
     private String getUserID(){

@@ -35,8 +35,8 @@ public class NewRepository {
         return newDao.getNewsByGame(game);
     }
 
-    public void update(int fav, String id, String token, String user_id){
-        new updateAsyncTask(newDao, id, user_id, token).execute(fav);
+    public void update(int fav, String id, String token){
+        new updateAsyncTask(newDao, id,token).execute(fav);
     }
 
     public void insert(NewEntity news){
@@ -61,20 +61,21 @@ public class NewRepository {
     private static class updateAsyncTask extends AsyncTask<Integer, Void, Void>{
 
         NewDao newDao;
-        String id, user_id, token;
+        String id, token;
 
-        public updateAsyncTask(NewDao newDao, String id, String user_id, String token) {
+        public updateAsyncTask(NewDao newDao, String id, String token) {
             this.newDao = newDao;
             this.token=token;
             this.id=id;
-            this.user_id=user_id;
         }
 
         @Override
         protected Void doInBackground(Integer... integers) {
             newDao.updateNew(integers[0], id);
             if(integers[0]==1){
-                ClientRequest.pushFav(user_id, id, token);
+                ClientRequest.pushFav(token,id);
+            }else{
+                ClientRequest.deleteFav(token, id);
             }
             return null;
         }
