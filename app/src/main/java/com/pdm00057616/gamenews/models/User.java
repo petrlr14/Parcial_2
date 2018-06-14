@@ -10,7 +10,7 @@ public class User {
     @SerializedName("created_date")
     private String date;
     @SerializedName("favoriteNews")
-    private List<New> favNews;
+    private List<String> favNews;
 
     private String user;
     private String password;
@@ -32,11 +32,11 @@ public class User {
         this.date = date;
     }
 
-    public List<New> getFavNews() {
+    public List<String> getFavNews() {
         return favNews;
     }
 
-    public void setFavNews(List<New> favNews) {
+    public void setFavNews(List<String> favNews) {
         this.favNews = favNews;
     }
 
