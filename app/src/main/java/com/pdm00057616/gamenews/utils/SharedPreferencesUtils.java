@@ -17,7 +17,14 @@ public class SharedPreferencesUtils {
         SharedPreferences preferences = context.getSharedPreferences("log", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("token", token);
-        editor.commit();
+        editor.apply();
+    }
+
+    public static void deleteSharePreferences(Context context){
+        SharedPreferences preferences = context.getSharedPreferences("log", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
     }
 
 }
