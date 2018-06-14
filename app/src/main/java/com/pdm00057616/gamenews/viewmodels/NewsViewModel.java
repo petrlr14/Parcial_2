@@ -47,5 +47,8 @@ public class NewsViewModel extends AndroidViewModel {
 
     public void delete(){repository.deleteNews();}
 
+    public void pushAllFavs(String token){
+        repository.pushAllFavs(token);
+    }
 
 }

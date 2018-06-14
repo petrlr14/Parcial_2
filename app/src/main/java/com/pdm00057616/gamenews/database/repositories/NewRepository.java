@@ -5,14 +5,11 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
-import com.pdm00057616.gamenews.API.GameNewsAPI;
 import com.pdm00057616.gamenews.database.AppDB;
 import com.pdm00057616.gamenews.database.daos.NewDao;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 
 import java.util.List;
-
-import io.reactivex.disposables.CompositeDisposable;
 
 public class NewRepository {
 
@@ -27,27 +24,31 @@ public class NewRepository {
         return newDao.getAllNews();
     }
 
-    public void deleteNews(){
+    public void deleteNews() {
         new deleteTableAsyncTask(newDao).execute();
     }
 
-    public LiveData<List<NewEntity>> getNewsByQuery(String query){
+    public LiveData<List<NewEntity>> getNewsByQuery(String query) {
         return newDao.getNewByQuery(query);
     }
 
-    public LiveData<List<NewEntity>> getNewsByGame(String game){
+    public LiveData<List<NewEntity>> getNewsByGame(String game) {
         return newDao.getNewsByGame(game);
     }
 
-    public void update(int fav, String id, String token){
-        new updateAsyncTask(newDao, id,token).execute(fav);
+    public void update(int fav, String id, String token) {
+        new updateAsyncTask(newDao, id, token).execute(fav);
     }
 
-    public void insert(NewEntity news){
+    public void pushAllFavs(String token) {
+        new pushAsyncTask(newDao, token).execute();
+    }
+
+    public void insert(NewEntity news) {
         new insertAsyncTask(newDao).execute(news);
     }
 
-    private static class insertAsyncTask extends AsyncTask<NewEntity, Void, Void>{
+    private static class insertAsyncTask extends AsyncTask<NewEntity, Void, Void> {
 
         private NewDao newDao;
 
@@ -62,30 +63,25 @@ public class NewRepository {
         }
     }
 
-    private static class updateAsyncTask extends AsyncTask<Integer, Void, Void>{
+    private static class updateAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         NewDao newDao;
         String id, token;
 
         public updateAsyncTask(NewDao newDao, String id, String token) {
             this.newDao = newDao;
-            this.token=token;
-            this.id=id;
+            this.token = token;
+            this.id = id;
         }
 
         @Override
         protected Void doInBackground(Integer... integers) {
             newDao.updateNew(integers[0], id);
-            if(integers[0]==1){
-                ClientRequest.pushFav(token,id);
-            }else{
-                ClientRequest.deleteFav(token, id);
-            }
             return null;
         }
     }
 
-    private static class deleteTableAsyncTask extends AsyncTask<Void, Void, Void>{
+    private static class deleteTableAsyncTask extends AsyncTask<Void, Void, Void> {
 
         NewDao newDao;
 
@@ -97,6 +93,30 @@ public class NewRepository {
         protected Void doInBackground(Void... voids) {
             newDao.nukeTable();
             return null;
+        }
+    }
+
+    private static class pushAsyncTask extends AsyncTask<String, Void, List<NewEntity>> {
+
+        NewDao newdao;
+        String token;
+
+        public pushAsyncTask(NewDao newdao, String token) {
+            this.newdao = newdao;
+            this.token = token;
+        }
+
+        @Override
+        protected List<NewEntity> doInBackground(String... strings) {
+            return newdao.getAllNewsForFav();
+        }
+
+        @Override
+        protected void onPostExecute(List<NewEntity> aVoid) {
+            super.onPostExecute(aVoid);
+            for (NewEntity x : aVoid) {
+                ClientRequest.pushFav(token, x.getId());
+            }
         }
     }
 }

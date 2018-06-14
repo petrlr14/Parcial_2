@@ -32,12 +32,8 @@ import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.net.SocketTimeoutException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -119,7 +115,7 @@ public class ClientRequest {
         activity.finish();
     }
 
-    private static void startLogin(Activity activity){
+    private static void startLogin(Activity activity) {
         activity.startActivity(new Intent(activity, LoginActivity.class));
         activity.finish();
     }
@@ -135,13 +131,14 @@ public class ClientRequest {
                     refreshLayout[0].setRefreshing(false);
                 }
                 if (code == 200) {
+                    viewModel.pushAllFavs(token);
                     viewModel.delete();
                     setListNewEntity(response.body(), viewModel);
                     getUserInfo(token, context, viewModel);
                     Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
-                } else if (code == 401){
+                } else if (code == 401) {
                     SharedPreferencesUtils.deleteSharePreferences(context);
-                    startLogin((Activity)context);
+                    startLogin((Activity) context);
                 }
             }
 
@@ -227,8 +224,6 @@ public class ClientRequest {
         userInfo.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                System.out.println(response.code() + "  userinf");
-                System.out.println(response.message());
                 if (response.isSuccessful()) {
                     SharedPreferencesUtils.saveUserID(response.body().getId(), context);
                     System.out.println(response.body().getFavNews().size());
@@ -289,4 +284,5 @@ public class ClientRequest {
             }
         });
     }
+
 }

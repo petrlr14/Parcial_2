@@ -183,6 +183,5 @@ public class MainActivity extends AppCompatActivity {
         ClientRequest.fetchAllNews(this, newsViewModel, getToken());
         ClientRequest.getCategories(getToken(), categoryViewModel);
         ClientRequest.getPlayers(getToken(), playerViewModel);
-        ClientRequest.getUserInfo(getToken(), this, newsViewModel);
     }
 }

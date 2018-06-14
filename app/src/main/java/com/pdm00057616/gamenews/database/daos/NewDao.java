@@ -29,6 +29,9 @@ public interface NewDao {
     @Query("UPDATE NewEntity SET isFav=:value WHERE _id=:id")
     void updateNew(int value, String id);
 
+    @Query("SELECT*FROM NewEntity WHERE isFav=1")
+    List<NewEntity> getAllNewsForFav();
+
     @Query("DELETE FROM NewEntity")
     void nukeTable();
 }
