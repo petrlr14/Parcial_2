@@ -16,6 +16,7 @@ import com.pdm00057616.gamenews.API.deserializer.PlayerDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.PushFavDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.UserDeserializer;
+import com.pdm00057616.gamenews.activities.LoginActivity;
 import com.pdm00057616.gamenews.activities.MainActivity;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
@@ -24,6 +25,7 @@ import com.pdm00057616.gamenews.models.Login;
 import com.pdm00057616.gamenews.models.New;
 import com.pdm00057616.gamenews.models.Player;
 import com.pdm00057616.gamenews.models.User;
+import com.pdm00057616.gamenews.utils.Converters;
 import com.pdm00057616.gamenews.utils.SharedPreferencesUtils;
 import com.pdm00057616.gamenews.viewmodels.CategoryViewModel;
 import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
@@ -52,7 +54,7 @@ public class ClientRequest {
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor((chain) -> {
                     okhttp3.Response response = chain.proceed(chain.request());
-                    if (response.code() != 200) {
+                    if (response.code() == 401) {
                         massage = response.body().string();
                         return chain.proceed(chain.request());
                     }
@@ -117,21 +119,30 @@ public class ClientRequest {
         activity.finish();
     }
 
+    private static void startLogin(Activity activity){
+        activity.startActivity(new Intent(activity, LoginActivity.class));
+        activity.finish();
+    }
+
 
     public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout... refreshLayout) {
         Call<List<New>> news = getClient(new Gson()).getNews("Beared " + token);
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
+                int code = response.code();
                 if (refreshLayout.length > 0) {
                     refreshLayout[0].setRefreshing(false);
                 }
-                if (response.isSuccessful()) {
+                if (code == 200) {
+                    viewModel.delete();
                     setListNewEntity(response.body(), viewModel);
+                    getUserInfo(token, context, viewModel);
                     Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
-                    getUserInfo(token,context, viewModel);
-                } else
-                    Toast.makeText(context, massage, Toast.LENGTH_SHORT).show();
+                } else if (code == 401){
+                    SharedPreferencesUtils.deleteSharePreferences(context);
+                    startLogin((Activity)context);
+                }
             }
 
             @Override
@@ -145,21 +156,10 @@ public class ClientRequest {
     }
 
     private static void setListNewEntity(List<New> list, NewsViewModel viewModel) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        try {
-            for (New li : list) {
-                li.setCreatedDate(df.parse(li.getCreated_date()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-        Collections.sort(list);
-        Collections.reverse(list);
         for (New x : list) {
             NewEntity newEntity = new NewEntity(
                     x.get_id(), x.getTitle(), x.getCoverImage(), x.getDescription(),
-                    x.getBody(), x.getGame(), x.getCreated_date(),
+                    x.getBody(), x.getGame(), Converters.fromDate(x.getCreated_date()),
                     0);
             viewModel.insert(newEntity);
         }
@@ -275,7 +275,7 @@ public class ClientRequest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(String.class, new DeleteFavDeserializer())
                 .create();
-        Call<String> call=getClient(gson).deleteFav(("Bearer "+token), newID);
+        Call<String> call = getClient(gson).deleteFav(("Bearer " + token), newID);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
