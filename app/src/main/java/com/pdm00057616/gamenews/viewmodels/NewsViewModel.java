@@ -4,8 +4,13 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.widget.Toast;
 
+import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.pdm00057616.gamenews.database.repositories.NewRepository;
 
@@ -39,5 +44,8 @@ public class NewsViewModel extends AndroidViewModel {
     public void insert(NewEntity news) {
         repository.insert(news);
     }
+
+    public void delete(){repository.deleteNews();}
+
 
 }
