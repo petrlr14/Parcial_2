@@ -56,9 +56,6 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
         holder.description.setText(news.getDescription());
         holder.currentFav = news.getIsFav();
         holder.progressBar.setVisibility(View.VISIBLE);
-        String[] dateArray = news.getCreateDate().split("T");
-        String date = context.getResources().getString(R.string.date_string) + ": " + dateArray[0];
-        holder.date.setText(date);
         setfav(holder.currentFav, holder);
         if (!(news.getCoverImage() == null)) {
             Picasso.get().load(news.getCoverImage())
