@@ -27,7 +27,7 @@
 
             <menu>
                 <group
-                    android:id="@+id/hola"
+                    android:id="@+id/games"
                     android:checkableBehavior="single">
 
                 </group>

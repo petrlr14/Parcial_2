@@ -30,6 +30,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int IDG=1234567898;
+
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -91,10 +93,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void addMenuItems(List<CategoryEntity> categories) {
         navigationView.getMenu().findItem(R.id.game_section).getSubMenu().clear();
+        int id=0;
         for (CategoryEntity x : categories) {
             navigationView
                     .getMenu().findItem(R.id.game_section)
-                    .getSubMenu().add(x.getName().toUpperCase())
+                    .getSubMenu().add(R.id.games, IDG+id, id, x.getName().toUpperCase())
+                    .setCheckable(true)
                     .setIcon(R.drawable.ic_videogame_24dp);
         }
     }
