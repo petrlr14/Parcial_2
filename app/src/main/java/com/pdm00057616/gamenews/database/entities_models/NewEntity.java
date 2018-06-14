@@ -14,10 +14,10 @@ public class NewEntity {
     private String id;
     private String title, coverImage, description, body, game;
     @ColumnInfo(name = "crate_date")
-    private String createDate;
+    private int createDate;
     private int isFav;
 
-    public NewEntity(@NonNull String id, String title, String coverImage, String description, String body, String game, String createDate, int isFav) {
+    public NewEntity(@NonNull String id, String title, String coverImage, String description, String body, String game, int createDate, int isFav) {
         this.id = id;
         this.title = title;
         this.coverImage = coverImage;
@@ -78,11 +78,11 @@ public class NewEntity {
         this.game = game;
     }
 
-    public String getCreateDate() {
+    public int getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(int createDate) {
         this.createDate = createDate;
     }
 
