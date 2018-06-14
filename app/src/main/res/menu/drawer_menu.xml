@@ -26,7 +26,11 @@
             android:title="@string/games_menu">
 
             <menu>
+                <group
+                    android:id="@+id/hola"
+                    android:checkableBehavior="single">
 
+                </group>
             </menu>
         </item>
 
