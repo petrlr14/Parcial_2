@@ -140,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.commit();
-        isLogged();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     private void setUserID() {
