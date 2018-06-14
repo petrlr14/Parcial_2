@@ -3,7 +3,6 @@ package com.pdm00057616.gamenews.API;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -12,7 +11,9 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pdm00057616.gamenews.API.deserializer.CategoriesDeserializer;
+import com.pdm00057616.gamenews.API.deserializer.DeleteFavDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.PlayerDeserializer;
+import com.pdm00057616.gamenews.API.deserializer.PushFavDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.UserDeserializer;
 import com.pdm00057616.gamenews.activities.MainActivity;
@@ -111,7 +112,6 @@ public class ClientRequest {
     }
 
 
-
     private static void startMain(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));
         activity.finish();
@@ -129,6 +129,7 @@ public class ClientRequest {
                 if (response.isSuccessful()) {
                     setListNewEntity(response.body(), viewModel);
                     Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
+                    getUserInfo(token,context, viewModel);
                 } else
                     Toast.makeText(context, massage, Toast.LENGTH_SHORT).show();
             }
@@ -226,11 +227,13 @@ public class ClientRequest {
         userInfo.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+                System.out.println(response.code() + "  userinf");
+                System.out.println(response.message());
                 if (response.isSuccessful()) {
                     SharedPreferencesUtils.saveUserID(response.body().getId(), context);
-                    for (New x : response.body().getFavNews()) {
-                        repository.insert(new NewEntity(x.get_id(), x.getTitle(), x.getCoverImage(),
-                                x.getDescription(), x.getBody(), x.getGame(), x.getCreated_date(), 1));
+                    System.out.println(response.body().getFavNews().size());
+                    for (String x : response.body().getFavNews()) {
+                        repository.update(1, x, token);
                     }
                 } else {
                     Toast.makeText(context, response.message(), Toast.LENGTH_SHORT).show();
@@ -245,19 +248,43 @@ public class ClientRequest {
     }
 
 
-    public static void pushFav(String token, String userID, String newID) {
-        Call<Void> call = getClient(new Gson()).pushFav("Bearer " + token, newID, userID);
-        call.enqueue(new Callback<Void>() {
+    public static void pushFav(String token, String newID) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(String.class, new PushFavDeserializer())
+                .create();
+        Call<String> call = getClient(gson).pushFav("Bearer " + token, newID);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                System.out.println(response.code());
+            public void onResponse(Call<String> call, Response<String> response) {
+                System.out.println(response.code() + " push");
                 if (response.code() == 200) {
-                    System.out.println("Exito");
+                    if (response.body().matches("true")) {
+                        System.out.println("se hizo");
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public static void deleteFav(String token, String newID) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(String.class, new DeleteFavDeserializer())
+                .create();
+        Call<String> call=getClient(gson).deleteFav(("Bearer "+token), newID);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                System.out.println(response.code());
+                System.out.println(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
                 t.printStackTrace();
             }
         });
