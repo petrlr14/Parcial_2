@@ -24,22 +24,15 @@ public class UserDeserializer implements JsonDeserializer<User>{
         if (userObject.get("avatar")!=null) {
             user.setAvatar(userObject.get("avatar").getAsString());
         }
-        JsonElement newsJsonElement=userObject.get("favoriteNews");
-        JsonArray newsJsonArray=newsJsonElement.getAsJsonArray();
+        JsonArray newsJsonArray=userObject.get("favoriteNews").getAsJsonArray();
         user.setFavNews(getFavNews(newsJsonArray));
         return user;
     }
 
-    private List<New> getFavNews(JsonArray array){
-        List<New> newsList=new ArrayList<>();
+    private List<String> getFavNews(JsonArray array){
+        List<String> newsList=new ArrayList<>();
         for(JsonElement x:array){
-            New news=new New();
-            news.set_id(x.getAsJsonObject().get("_id").getAsString());
-            news.setTitle(x.getAsJsonObject().get("title").getAsString());
-            news.setBody(x.getAsJsonObject().get("body").getAsString());
-            news.setGame(x.getAsJsonObject().get("game").getAsString());
-            news.setCreated_date(x.getAsJsonObject().get("created_date").getAsString());
-            newsList.add(news);
+                newsList.add(x.getAsString());
         }
         return newsList;
     }
