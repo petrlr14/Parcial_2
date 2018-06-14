@@ -11,6 +11,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -29,7 +30,7 @@ public interface GameNewsAPI {
     @GET("/news")
     Call<List<New>> getNews(@Header("Authorization") String auth);
 
-    @GET("users/detail")
+    @GET("/users/detail")
     Call<User> getUserInfo(@Header("Authorization") String auth);
 
     @GET("/news/type/list")
@@ -38,9 +39,14 @@ public interface GameNewsAPI {
     @GET("/players")
     Call<List<Player>> getPlayers(@Header("Authorization") String auth);
 
+    @POST("/user/fav/{idNew}")
+    Call<String> pushFav(@Header("Authorization") String auth, @Path("idNew")String idNew);
+
     @FormUrlEncoded
-    @POST("/users/{user_id}/fav")
-    Call<Void> pushFav(@Header("Authorization")String auth,
-                       @Field("new") String fav,
-                       @Path("user_id") String user_id);
+    @HTTP(method = "DELETE", path = "/user/fav", hasBody = true)
+    Call<String> deleteFav(
+            @Header("Authorization") String auth,
+            @Field("new") String newID
+    );
+
 }
