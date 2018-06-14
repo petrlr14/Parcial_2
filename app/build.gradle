@@ -52,4 +52,7 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+
+    //apache common IO
+    implementation 'commons-io:commons-io:2.4'
 }
