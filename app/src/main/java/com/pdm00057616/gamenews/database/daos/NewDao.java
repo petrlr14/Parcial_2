@@ -17,7 +17,7 @@ public interface NewDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNew(NewEntity news);
 
-    @Query("SELECT*FROM NewEntity")
+    @Query("SELECT*FROM NewEntity ORDER BY crate_date DESC")
     LiveData<List<NewEntity>> getAllNews();
 
     @Query("SELECT*FROM NewEntity WHERE title like :query")
@@ -28,4 +28,7 @@ public interface NewDao {
 
     @Query("UPDATE NewEntity SET isFav=:value WHERE _id=:id")
     void updateNew(int value, String id);
+
+    @Query("DELETE FROM NewEntity")
+    void nukeTable();
 }

@@ -27,6 +27,10 @@ public class NewRepository {
         return newDao.getAllNews();
     }
 
+    public void deleteNews(){
+        new deleteTableAsyncTask(newDao).execute();
+    }
+
     public LiveData<List<NewEntity>> getNewsByQuery(String query){
         return newDao.getNewByQuery(query);
     }
@@ -77,6 +81,21 @@ public class NewRepository {
             }else{
                 ClientRequest.deleteFav(token, id);
             }
+            return null;
+        }
+    }
+
+    private static class deleteTableAsyncTask extends AsyncTask<Void, Void, Void>{
+
+        NewDao newDao;
+
+        public deleteTableAsyncTask(NewDao newDao) {
+            this.newDao = newDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            newDao.nukeTable();
             return null;
         }
     }
