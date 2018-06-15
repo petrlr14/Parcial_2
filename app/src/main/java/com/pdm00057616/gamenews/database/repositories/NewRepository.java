@@ -37,6 +37,11 @@ public class NewRepository {
     }
 
     public void update(int fav, String id, String token) {
+        if(fav==0){
+            ClientRequest.deleteFav(token, id);
+        }else{
+            ClientRequest.pushFav(token, id);
+        }
         new updateAsyncTask(newDao, id, token).execute(fav);
     }
 
