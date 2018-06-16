@@ -83,9 +83,9 @@
         </RelativeLayout>
 
         <Button
-            android:id="@+id/sign_in_button"
+            android:id="@+id/login_button"
             style="?android:textAppearanceSmall"
-            android:layout_width="206dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/fields"
             android:layout_centerHorizontal="true"
@@ -94,8 +94,17 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@string/action_sign_in"
+            android:text="@string/login"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/sign_in"
+            android:layout_marginTop="24dp"
+            android:layout_below="@id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Don't have an account yet? Create one"/>
 
 
         <TextView
