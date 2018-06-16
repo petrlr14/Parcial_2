@@ -199,14 +199,9 @@ public class NewsViewFragment extends Fragment {
         newsViewModel.update(((current==0)?1:0), id, aux);
     }
 
-    private String getUserID(){
-        SharedPreferences preferences=getContext().getSharedPreferences("log", Context.MODE_PRIVATE);
-        return preferences.getString("id", "");
-    }
-
     private void startDetails(String titulo, String descripcion, String contenido, String image){
         Intent intent=new Intent(getContext(), DetailsActivity.class);
-        intent.putExtra("titulo", descripcion);
+        intent.putExtra("titulo", titulo);
         intent.putExtra("descripcion", descripcion);
         intent.putExtra("contenido", contenido);
         intent.putExtra("image", image);
