@@ -49,4 +49,12 @@ public interface GameNewsAPI {
             @Field("new") String newID
     );
 
+    @FormUrlEncoded
+    @HTTP(method = "PUT", path = "/users/{idUser}", hasBody = true)
+    Call<Void> updateUser(
+            @Header("Authorization")String auth,
+            @Path("idUser")String userID,
+            @Field("password")String password
+    );
+
 }
