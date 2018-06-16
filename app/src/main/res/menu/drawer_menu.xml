@@ -41,7 +41,8 @@
                 <group android:checkableBehavior="single">
                     <item
                         android:id="@+id/setting_section"
-                        android:title="@string/settings_menu" />
+                        android:title="@string/settings_menu"
+                        android:icon="@drawable/pswd"/>
 
                     <item
                         android:id="@+id/logout"
