@@ -36,7 +36,10 @@
             android:id="@+id/progress_bar"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:padding="40dp"
             android:layout_below="@id/date_text"
+            android:minWidth="10dp"
+            android:maxWidth="10dp"
             android:visibility="visible"/>
 
         <ImageView
