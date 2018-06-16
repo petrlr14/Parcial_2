@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.net.SocketTimeoutException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +67,9 @@ public class ClientRequest {
         return retrofit.create(GameNewsAPI.class);
     }
 
-    public static void login(String user, String password, Activity context, RelativeLayout relativeLayout) {
+    public static void login(String user, String password, Activity context, RelativeLayout relativeLayout, ProgressBar progress) {
         relativeLayout.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Login.class, new TokenDeserializer())
                 .create();
@@ -83,9 +86,11 @@ public class ClientRequest {
                 } else if (response.code() == 401) {
                     if (massage.matches("Contraseña")) {
                         relativeLayout.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
                         Toast.makeText(context, "Contraseña", Toast.LENGTH_SHORT).show();
                     } else {
                         relativeLayout.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
                         Toast.makeText(context, "Usuario", Toast.LENGTH_SHORT).show();
                     }
                 } else {

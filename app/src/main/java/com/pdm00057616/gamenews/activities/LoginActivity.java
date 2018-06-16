@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText editTextUser, editTextPassword;
     private Button button;
     private RelativeLayout relativeLayout;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.edit_text_password);
         button = findViewById(R.id.sign_in_button);
         relativeLayout = findViewById(R.id.relative_progress);
+        progressBar=findViewById(R.id.login_progress);
         button.setOnClickListener(v -> buttonAction());
     }
 
@@ -37,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Fields Must not be empty", Toast.LENGTH_SHORT).show();
             return;
         }
-        ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), this, relativeLayout);
+        ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), this, relativeLayout, progressBar);
     }
 
     @Override
