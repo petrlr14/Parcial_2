@@ -27,4 +27,9 @@ public class SharedPreferencesUtils {
         editor.apply();
     }
 
+    public static String getUserID(Context context){
+        SharedPreferences preferences=context.getSharedPreferences("log", Context.MODE_PRIVATE);
+        return preferences.getString("id", "");
+    }
+
 }
