@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
+import com.pdm00057616.gamenews.fragments.ConfirmationFragment;
 import com.pdm00057616.gamenews.fragments.IndividualGameFragment;
 import com.pdm00057616.gamenews.fragments.NewsViewFragment;
 import com.pdm00057616.gamenews.utils.ClearCache;
@@ -70,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.fav_news:
                     fragment = NewsViewFragment.newInstance(2);
+                    break;
+                case R.id.setting_section:
+                    fragment=new ConfirmationFragment();
                     break;
                 case R.id.logout:
                     logout();
@@ -148,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = this.getSharedPreferences("log", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
         newsViewModel.delete();
         startActivity(new Intent(this, LoginActivity.class));
         ClearCache.Clear(this.getApplicationContext());
