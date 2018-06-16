@@ -2,10 +2,7 @@
     <string name="app_name">Game News</string>
     <string name="news_menu">News</string>
     <string name="games_menu">Games</string>
-    <string name="league_of_legends_menu">League of legends</string>
-    <string name="dota_menu">Dota</string>
-    <string name="csgo_menu">CSGO</string>
-    <string name="settings_menu">Settings</string>
+    <string name="settings_menu">Change Password</string>
     <string name="favorites_menu">Favorites</string>
     <string name="news_image_description">News image</string>
     <string name="fav_start_description">fav start</string>
@@ -14,7 +11,7 @@
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="login">Login</string>
 
     <string name="image_by_category_description">Image by category</string>
     <string name="player_photo_description">Player photo</string>
