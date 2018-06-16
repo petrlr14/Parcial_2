@@ -24,7 +24,7 @@
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait" />
         <activity android:name=".activities.DetailsActivity" />
-        <activity android:name=".activities.ChangePasswordActivity"/>
+        <activity android:name=".activities.ChangePasswordActivity" />
     </application>
 
 </manifest>

@@ -21,4 +21,5 @@
 
     <string name="date_string">Date</string>
     <string name="no_favourites_yet_label">No favourites yet</string>
+    <string name="app_logo_description">App logo</string>
 </resources>
