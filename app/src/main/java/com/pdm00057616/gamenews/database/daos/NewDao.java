@@ -20,7 +20,7 @@ public interface NewDao {
     @Query("SELECT*FROM NewEntity ORDER BY crate_date DESC")
     LiveData<List<NewEntity>> getAllNews();
 
-    @Query("SELECT*FROM NewEntity WHERE title like :query")
+    @Query("SELECT*FROM NewEntity WHERE title like :query ORDER BY crate_date DESC")
     LiveData<List<NewEntity>> getNewByQuery(String query);
 
     @Query("SELECT*FROM NewEntity WHERE game =:game")
