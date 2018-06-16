@@ -3,6 +3,7 @@ package com.pdm00057616.gamenews.API;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -17,6 +18,7 @@ import com.pdm00057616.gamenews.API.deserializer.PlayerDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.PushFavDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.UserDeserializer;
+import com.pdm00057616.gamenews.activities.ChangePasswordActivity;
 import com.pdm00057616.gamenews.activities.LoginActivity;
 import com.pdm00057616.gamenews.activities.MainActivity;
 import com.pdm00057616.gamenews.database.entities_models.CategoryEntity;
@@ -33,7 +35,6 @@ import com.pdm00057616.gamenews.viewmodels.NewsViewModel;
 import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.net.SocketTimeoutException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class ClientRequest {
         return retrofit.create(GameNewsAPI.class);
     }
 
-    public static void login(String user, String password, Activity context, RelativeLayout relativeLayout, ProgressBar progress) {
+    public static void login(String user, String password, Activity context, RelativeLayout relativeLayout, ProgressBar progress, boolean bool) {
         relativeLayout.setVisibility(View.GONE);
         progress.setVisibility(View.VISIBLE);
         Gson gson = new GsonBuilder()
@@ -82,7 +83,7 @@ public class ClientRequest {
                 if (response.code() == 200) {
                     Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
                     SharedPreferencesUtils.saveToken(context, response.body().getToken());
-                    startMain(context);
+                    startAct(context, bool);
                 } else if (response.code() == 401) {
                     if (massage.matches("Contraseña")) {
                         relativeLayout.setVisibility(View.VISIBLE);
@@ -115,9 +116,10 @@ public class ClientRequest {
     }
 
 
-    private static void startMain(Activity activity) {
-        activity.startActivity(new Intent(activity, MainActivity.class));
-        activity.finish();
+    private static void startAct(Activity activity, boolean bool) {
+        activity.startActivity(new Intent(activity, bool?MainActivity.class:ChangePasswordActivity.class));
+        if(bool)
+            activity.finish();
     }
 
     private static void startLogin(Activity activity) {
@@ -285,6 +287,25 @@ public class ClientRequest {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public static void updateUser(String token, String idUser, String newPassword){
+        Call<Void> call=getClient(new Gson()).updateUser("Bearer "+token, idUser, newPassword);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.code()==200){
+                    System.out.println("Se hizo");
+                }else{
+                    System.out.println("something happend");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
                 t.printStackTrace();
             }
         });

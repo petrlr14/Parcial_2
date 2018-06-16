@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private void bindViews() {
         editTextUser = findViewById(R.id.edit_text_username);
         editTextPassword = findViewById(R.id.edit_text_password);
-        button = findViewById(R.id.sign_in_button);
+        button = findViewById(R.id.login_button);
         relativeLayout = findViewById(R.id.relative_progress);
         progressBar=findViewById(R.id.login_progress);
         button.setOnClickListener(v -> buttonAction());
@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Fields Must not be empty", Toast.LENGTH_SHORT).show();
             return;
         }
-        ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), this, relativeLayout, progressBar);
+        ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), this, relativeLayout, progressBar, true);
     }
 
     @Override
