@@ -20,7 +20,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater
+        View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.images_cardview, parent, false);
         return new ViewHolder(view);
@@ -28,9 +28,9 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        NewEntity newEntity=newsList.get(position);
+        NewEntity newEntity = newsList.get(position);
         System.out.println(newEntity.getTitle());
-        if(newEntity.getCoverImage()!=null)
+        if (newEntity.getCoverImage() != null)
             Picasso.get().load(newEntity.getCoverImage()).error(R.drawable.error_loading).into(holder.imageView);
         else
             Picasso.get().load(R.drawable.error_loading).error(R.drawable.error_loading).into(holder.imageView);
@@ -38,11 +38,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return newsList==null?0:newsList.size();
+        return newsList == null ? 0 : newsList.size();
     }
 
-    public void setNewsList(List<NewEntity> list){
-        newsList=list;
+    public void setNewsList(List<NewEntity> list) {
+        newsList = list;
         notifyDataSetChanged();
     }
 

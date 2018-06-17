@@ -15,19 +15,19 @@ public class CategoryRepository {
     private CategoryDao categoryDao;
 
     public CategoryRepository(Application application) {
-        AppDB db=AppDB.getInstance(application);
+        AppDB db = AppDB.getInstance(application);
         this.categoryDao = db.categoryDao();
     }
 
-    public LiveData<List<CategoryEntity>> getCategories(){
+    public LiveData<List<CategoryEntity>> getCategories() {
         return categoryDao.getAllCategories();
     }
 
-    public void insert(CategoryEntity categoryEntity){
+    public void insert(CategoryEntity categoryEntity) {
         new InsertCategoryAsyncTask(categoryDao).execute(categoryEntity);
     }
 
-    private static class InsertCategoryAsyncTask extends AsyncTask<CategoryEntity, Void, Void>{
+    private static class InsertCategoryAsyncTask extends AsyncTask<CategoryEntity, Void, Void> {
 
         private CategoryDao categoryDao;
 

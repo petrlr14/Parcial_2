@@ -2,6 +2,7 @@ package com.pdm00057616.gamenews.database.repositories;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
@@ -36,11 +37,11 @@ public class NewRepository {
         return newDao.getNewsByGame(game);
     }
 
-    public void update(int fav, String id, String token) {
+    public void update(int fav, String id, String token, Context...context) {
         if(fav==0){
-            ClientRequest.deleteFav(token, id);
+            ClientRequest.deleteFav(token, id, context);
         }else{
-            ClientRequest.pushFav(token, id);
+            ClientRequest.pushFav(token, id, context);
         }
         new updateAsyncTask(newDao, id, token).execute(fav);
     }

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int IDG=1234567898;
+    private static final int IDG = 1234567898;
 
     private Toolbar toolbar;
     private NavigationView navigationView;
@@ -73,14 +73,14 @@ public class MainActivity extends AppCompatActivity {
                     fragment = NewsViewFragment.newInstance(2);
                     break;
                 case R.id.setting_section:
-                    fragment=new ConfirmationFragment();
+                    fragment = new ConfirmationFragment();
                     break;
                 case R.id.logout:
                     logout();
                     fragment = null;
                     break;
                 default:
-                    fragment = IndividualGameFragment.newInstance(item.getTitle().toString().toLowerCase());
+                    fragment = IndividualGameFragment.newInstance(item.getTitle().toString());
                     break;
             }
             if (fragment != null) {
@@ -97,18 +97,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void addMenuItems(List<CategoryEntity> categories) {
         navigationView.getMenu().findItem(R.id.game_section).getSubMenu().clear();
-        int id=0;
+        int id = 0;
         for (CategoryEntity x : categories) {
             navigationView
                     .getMenu().findItem(R.id.game_section)
-                    .getSubMenu().add(R.id.games, IDG+id, id, x.getName().toUpperCase())
+                    .getSubMenu().add(R.id.games, IDG + id, id, x.getName())
                     .setCheckable(true)
                     .setIcon(R.drawable.ic_videogame_24dp);
         }
     }
 
 
-    private void bindAll(){
+    private void bindAll() {
         if (isLogged()) {
             setContentView(R.layout.activity_main);
             newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
@@ -117,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
             categoryViewModel
                     .getAllCategories()
                     .observe(this, this::addMenuItems);
-            if(isNetworkAvailable()){
+            if (isNetworkAvailable()) {
                 firstFetch();
-            }else{
-                Toast.makeText(this, "No con available, data from cache loadin", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
             }
             bindViews();
             setFirstView();
@@ -132,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean isLogged() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);
-        if (!sharedPreferences.contains("token")) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.shared_preferences_file_name), MODE_PRIVATE);
+        if (!sharedPreferences.contains(getString(R.string.token))) {
             return false;
         } else {
             return true;
@@ -168,24 +168,24 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(navigationView.getMenu().getItem(0).getTitle());
     }
 
-    private boolean isNetworkAvailable(){
-        boolean wifi=false, mobile=false;
-        ConnectivityManager manager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] networkInfo=manager.getAllNetworkInfo();
+    private boolean isNetworkAvailable() {
+        boolean wifi = false, mobile = false;
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] networkInfo = manager.getAllNetworkInfo();
         for (NetworkInfo info : networkInfo) {
-            if(info.getTypeName().equals("WIFI"))
-                if(info.isConnected())
-                    wifi=true;
-            if(info.getTypeName().equals("MOBILE"))
+            if (info.getTypeName().equals("WIFI"))
                 if (info.isConnected())
-                    mobile=true;
+                    wifi = true;
+            if (info.getTypeName().equals("MOBILE"))
+                if (info.isConnected())
+                    mobile = true;
         }
-        return wifi||mobile;
+        return wifi || mobile;
     }
 
-    private void firstFetch(){
+    private void firstFetch() {
         ClientRequest.fetchAllNews(this, newsViewModel, getToken());
-        ClientRequest.getCategories(getToken(), categoryViewModel);
-        ClientRequest.getPlayers(getToken(), playerViewModel);
+        ClientRequest.getCategories(getToken(), categoryViewModel, this);
+        ClientRequest.getPlayers(getToken(), playerViewModel, this);
     }
 }

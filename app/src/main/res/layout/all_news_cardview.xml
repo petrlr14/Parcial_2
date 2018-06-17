@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    app:cardElevation="2dp"
+    app:cardElevation="@dimen/dimen_4dp"
+    app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="true">
 
     <RelativeLayout
@@ -18,8 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/dimen_8dp"
             android:background="@null"
-            android:layout_margin="8dp"
             android:contentDescription="@string/fav_start_description" />
 
         <TextView
@@ -35,19 +36,20 @@
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:padding="40dp"
+            android:layout_height="@dimen/dimen"
             android:layout_below="@id/date_text"
-            android:minWidth="10dp"
             android:maxWidth="10dp"
-            android:visibility="visible"/>
+            android:minWidth="10dp"
+            android:padding="40dp"
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/news_image"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/dimen_250"
             android:layout_below="@+id/date_text"
-            android:scaleType="centerCrop"/>
+            android:contentDescription="@string/news_image_description"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/new_title"
@@ -59,7 +61,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:lines="1"
-            android:padding="8dp"
+            android:padding="@dimen/dimen_8dp"
             android:textAppearance="?android:attr/textAppearanceLargeInverse" />
 
         <TextView
@@ -68,12 +70,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/news_image"
             android:layout_centerHorizontal="true"
-            android:layout_margin="16dp"
-            android:layout_marginTop="14dp"
+            android:layout_margin="@dimen/dimen_16dp"
+            android:layout_marginTop="@dimen/dimen_14dp"
             android:ellipsize="end"
             android:lines="2"
-            android:textColor="@color/black"
-            android:textAppearance="?android:attr/textAppearanceLargeInverse" />
+            android:textAppearance="?android:attr/textAppearanceLargeInverse"
+            android:textColor="@color/black" />
     </RelativeLayout>
 
 

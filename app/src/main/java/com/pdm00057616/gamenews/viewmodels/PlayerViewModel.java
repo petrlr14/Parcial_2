@@ -16,14 +16,14 @@ public class PlayerViewModel extends AndroidViewModel {
 
     public PlayerViewModel(@NonNull Application application) {
         super(application);
-        repository=new PlayerRepository(application);
+        repository = new PlayerRepository(application);
     }
 
-    public LiveData<List<PlayerEntity>> getPlayersByGame(String game){
+    public LiveData<List<PlayerEntity>> getPlayersByGame(String game) {
         return repository.getPlayersByGame(game);
     }
 
-    public void insert(PlayerEntity playerEntity){
+    public void insert(PlayerEntity playerEntity) {
         repository.insertPlayer(playerEntity);
     }
 }

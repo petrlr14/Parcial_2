@@ -7,7 +7,6 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
-import com.pdm00057616.gamenews.models.New;
 
 import java.util.List;
 

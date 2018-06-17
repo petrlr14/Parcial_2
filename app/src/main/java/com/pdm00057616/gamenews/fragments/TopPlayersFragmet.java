@@ -56,7 +56,7 @@ public class TopPlayersFragmet extends Fragment{
         adapter=new PlayerAdapter();
         viewModel= ViewModelProviders.of(this).get(PlayerViewModel.class);
         viewModel.getPlayersByGame(game).observe(this, list->adapter.setList(list));
-        refreshLayout.setOnRefreshListener(()-> ClientRequest.getPlayers(token, viewModel, refreshLayout));
+        refreshLayout.setOnRefreshListener(()-> ClientRequest.getPlayers(token, viewModel, activity, refreshLayout));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;

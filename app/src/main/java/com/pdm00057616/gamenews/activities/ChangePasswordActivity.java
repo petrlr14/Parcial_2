@@ -1,7 +1,5 @@
 package com.pdm00057616.gamenews.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +29,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Change your password");
+        getSupportActionBar().setTitle(getString(R.string.change_pass));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         newPassword = findViewById(R.id.new_password);
         confirmPassword = findViewById(R.id.confirm_password);
@@ -41,21 +39,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private void onClickList() {
         if (newPassword.getText().toString().equals("") && confirmPassword.getText().toString().equals("")) {
-            Toast.makeText(this, "Fields must not be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getText(R.string.empty_fields_warning), Toast.LENGTH_SHORT).show();
         } else if (newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
-            ClientRequest.updateUser(getToken(), SharedPreferencesUtils.getUserID(this), newPassword.getText().toString(), this);
+            ClientRequest.updateUser(SharedPreferencesUtils.getToken(this), SharedPreferencesUtils.getUserID(this), newPassword.getText().toString(), this);
         } else {
-            Toast.makeText(this, "Passwords must conicide", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.password_dont_match_warning), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private String getToken() {
-        SharedPreferences preferences = this.getSharedPreferences("log", Context.MODE_PRIVATE);
-        if (preferences.contains("token")) {
-            return preferences.getString("token", "");
-        }
-        return "";
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

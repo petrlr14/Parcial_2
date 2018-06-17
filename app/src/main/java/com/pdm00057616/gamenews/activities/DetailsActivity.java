@@ -26,7 +26,10 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         Intent intent=getIntent();
-        getInfo(intent.getExtras());
+        Bundle bundle=intent.getExtras();
+        if (bundle!=null) {
+            getInfo(bundle);
+        }
         bindViews();
         setInfo();
     }

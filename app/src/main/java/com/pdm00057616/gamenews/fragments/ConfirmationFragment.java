@@ -13,13 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
 import com.pdm00057616.gamenews.R;
 
-public class ConfirmationFragment extends Fragment{
+public class ConfirmationFragment extends Fragment {
 
     private TextInputEditText editTextUser, editTextPassword;
     private Button button;
@@ -30,25 +29,25 @@ public class ConfirmationFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context=getContext();
+        context = getContext();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.activity_login, container, false);
+        View view = inflater.inflate(R.layout.activity_login, container, false);
         bindViews(view);
         return view;
     }
 
-    private void bindViews(View view){
+    private void bindViews(View view) {
         editTextUser = view.findViewById(R.id.edit_text_username);
         editTextPassword = view.findViewById(R.id.edit_text_password);
         button = view.findViewById(R.id.login_button);
         relativeLayout = view.findViewById(R.id.relative_progress);
-        progressBar=view.findViewById(R.id.login_progress);
+        progressBar = view.findViewById(R.id.login_progress);
         button.setText("CHANGE PASSWORD");
-        button.setOnClickListener(v->buttonAction());
+        button.setOnClickListener(v -> buttonAction());
     }
 
     private void buttonAction() {
@@ -56,7 +55,7 @@ public class ConfirmationFragment extends Fragment{
             Toast.makeText(context, "Fields Must not be empty", Toast.LENGTH_SHORT).show();
             return;
         }
-        ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), (Activity)context, relativeLayout, progressBar, false);
+        ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), (Activity) context, relativeLayout, progressBar, false);
     }
 
     @Override

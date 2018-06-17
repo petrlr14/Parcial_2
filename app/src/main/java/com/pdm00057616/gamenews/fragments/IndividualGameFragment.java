@@ -1,7 +1,5 @@
 package com.pdm00057616.gamenews.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,8 +18,6 @@ public class IndividualGameFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private GameViewPagerAdapter adapter;
-    private Context context;
-    private Activity activity;
     private String category;
 
     public static IndividualGameFragment newInstance(String category) {
@@ -36,21 +32,21 @@ public class IndividualGameFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        category=getArguments().getString("category");
+        category = getArguments().getString("category");
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.individual_game_fragment, container, false);
-        adapter=new GameViewPagerAdapter(getChildFragmentManager());
+        adapter = new GameViewPagerAdapter(getChildFragmentManager());
         viewPager = view.findViewById(R.id.view_pager);
         tabLayout = view.findViewById(R.id.tab_layout);
         setFragments();
         return view;
     }
 
-    private void setFragments(){
+    private void setFragments() {
         adapter.addFragment(NewsViewFragment.newInstance(1, category), "News");
         adapter.addFragment(TopPlayersFragmet.newInstance(category), "Top Players");
         adapter.addFragment(GameImagesFragment.newInstance(category), "Images");

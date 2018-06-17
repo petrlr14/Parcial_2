@@ -8,13 +8,8 @@ import com.google.gson.JsonParseException;
 import com.pdm00057616.gamenews.models.New;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
-public class NewsDeserializer implements JsonDeserializer<New>{
+public class NewsDeserializer implements JsonDeserializer<New> {
 
     @Override
     public New deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

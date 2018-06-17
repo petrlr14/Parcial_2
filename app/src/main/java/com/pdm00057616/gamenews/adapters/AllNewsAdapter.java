@@ -1,6 +1,5 @@
 package com.pdm00057616.gamenews.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,28 +14,24 @@ import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.database.entities_models.NewEntity;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import java.util.List;
 
 public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter.ViewHolder> {
 
     private List<NewEntity> newList;
-    private Transformation transformation;
-    private Context context;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_news_cardview, parent, false);
-        context = parent.getContext();
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NewEntity newAux = newList.get(holder.getAdapterPosition());
-        bindViews(newAux, holder, context);
+        bindViews(newAux, holder);
 
     }
 
@@ -50,7 +45,7 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
         notifyDataSetChanged();
     }
 
-    private void bindViews(NewEntity news, ViewHolder holder, Context context) {
+    private void bindViews(NewEntity news, ViewHolder holder) {
         holder.newsID = news.getId();
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getDescription());
@@ -102,7 +97,7 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
         holder.image = news.getCoverImage();
     }
 
-    public abstract void onclickFav(View view, String id, int currentFav);
+    public abstract void onclickFav(String id, int currentFav);
 
     public abstract void onClickDetails(String titulo, String descripcion, String contenido, String image);
 
@@ -122,7 +117,7 @@ public abstract class AllNewsAdapter extends RecyclerView.Adapter<AllNewsAdapter
             date = itemView.findViewById(R.id.date_text);
             progressBar = itemView.findViewById(R.id.progress_bar);
             favButton = itemView.findViewById(R.id.fav_button);
-            favButton.setOnClickListener(v -> onclickFav(v, newsID, currentFav));
+            favButton.setOnClickListener(v -> onclickFav(newsID, currentFav));
             itemView.setOnClickListener(v -> onClickDetails(titulo, descripcion, contenido, image));
         }
     }

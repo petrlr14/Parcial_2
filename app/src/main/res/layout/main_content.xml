@@ -13,8 +13,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            app:titleTextColor="@color/white"
-            app:collapseIcon="@drawable/ic_arrow_back_black_24dp"/>
+            app:collapseIcon="@drawable/ic_arrow_back_black_24dp"
+            app:titleTextColor="@color/white" />
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout

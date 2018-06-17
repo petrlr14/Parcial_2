@@ -15,19 +15,19 @@ public class PlayerRepository {
     private PlayerDao playerDao;
 
     public PlayerRepository(Application application) {
-        AppDB db=AppDB.getInstance(application);
-        playerDao=db.playerDao();
+        AppDB db = AppDB.getInstance(application);
+        playerDao = db.playerDao();
     }
 
-    public LiveData<List<PlayerEntity>> getPlayersByGame(String game){
+    public LiveData<List<PlayerEntity>> getPlayersByGame(String game) {
         return playerDao.getPlayer(game);
     }
 
-    public void insertPlayer(PlayerEntity playerEntity){
+    public void insertPlayer(PlayerEntity playerEntity) {
         new InsertAsyncTask(playerDao).execute(playerEntity);
     }
 
-    private static class InsertAsyncTask extends AsyncTask<PlayerEntity, Void, Void>{
+    private static class InsertAsyncTask extends AsyncTask<PlayerEntity, Void, Void> {
 
         private PlayerDao playerDao;
 

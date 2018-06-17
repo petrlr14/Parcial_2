@@ -18,7 +18,7 @@ import retrofit2.http.Path;
 
 public interface GameNewsAPI {
 
-    static final String END_POINT = "http://gamenewsuca.herokuapp.com";
+    String END_POINT = "http://gamenewsuca.herokuapp.com";
 
     @FormUrlEncoded
     @POST("/login")
@@ -40,7 +40,7 @@ public interface GameNewsAPI {
     Call<List<Player>> getPlayers(@Header("Authorization") String auth);
 
     @POST("/user/fav/{idNew}")
-    Call<String> pushFav(@Header("Authorization") String auth, @Path("idNew")String idNew);
+    Call<String> pushFav(@Header("Authorization") String auth, @Path("idNew") String idNew);
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "/user/fav", hasBody = true)
@@ -52,9 +52,9 @@ public interface GameNewsAPI {
     @FormUrlEncoded
     @HTTP(method = "PUT", path = "/users/{idUser}", hasBody = true)
     Call<Void> updateUser(
-            @Header("Authorization")String auth,
-            @Path("idUser")String userID,
-            @Field("password")String password
+            @Header("Authorization") String auth,
+            @Path("idUser") String userID,
+            @Field("password") String password
     );
 
 }

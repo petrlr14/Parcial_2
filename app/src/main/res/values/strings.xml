@@ -22,4 +22,36 @@
     <string name="date_string">Date</string>
     <string name="no_favourites_yet_label">No favourites yet</string>
     <string name="app_logo_description">App logo</string>
+    <string name="new_password_hint">New password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="confirm_change_btn">Confirm change</string>
+    <string name="search_view_hint">Search&#8230;</string>
+
+    <!--SharedPreferences strings-->
+    <string name="token">token</string>
+    <string name="shared_preferences_file_name">log</string>
+    <string name="user_id">id</string>
+
+    <!--Entities fields names-->
+    <string name="title">title</string>
+    <string name="description">description</string>
+    <string name="content">content</string>
+    <string name="image">image</string>
+
+    <!--Java string resources-->
+    <string name="change_pass">Change your password</string>
+    <string name="empty_fields_warning">Fields must not be empty</string>
+    <string name="password_dont_match_warning">Passwords do not match</string>
+    <string name="no_connection">No connection available, data will be loading from cache</string>
+    <string name="succeed_login">Welcome</string>
+    <string name="wrong_user">Wrong username</string>
+    <string name="wrong_pass">Wrong password</string>
+    <string name="something_bad">An unexpected error occurred</string>
+    <string name="time_out">Could Not reach the server, please try again letter</string>
+    <string name="fetching_data">Fetching Data</string>
+    <string name="session_expired">Session expired</string>
+    <string name="success_new_password">Success! you must login again</string>
+    <string name="bearer">Bearer</string>
+
+
 </resources>

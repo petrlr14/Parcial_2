@@ -3,7 +3,6 @@ package com.pdm00057616.gamenews.API;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.NavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -18,6 +17,7 @@ import com.pdm00057616.gamenews.API.deserializer.PlayerDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.PushFavDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.TokenDeserializer;
 import com.pdm00057616.gamenews.API.deserializer.UserDeserializer;
+import com.pdm00057616.gamenews.R;
 import com.pdm00057616.gamenews.activities.ChangePasswordActivity;
 import com.pdm00057616.gamenews.activities.LoginActivity;
 import com.pdm00057616.gamenews.activities.MainActivity;
@@ -81,35 +81,33 @@ public class ClientRequest {
             public void onResponse(Call<Login> call, Response<Login> response) {
                 System.out.println(response.code());
                 if (response.code() == 200) {
-                    Toast.makeText(context, "Exito", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.succeed_login), Toast.LENGTH_SHORT).show();
                     SharedPreferencesUtils.saveToken(context, response.body().getToken());
                     startAct(context, bool);
                 } else if (response.code() == 401) {
                     if (massage.matches("Contraseña")) {
                         relativeLayout.setVisibility(View.VISIBLE);
                         progress.setVisibility(View.GONE);
-                        Toast.makeText(context, "Contraseña", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.wrong_pass), Toast.LENGTH_SHORT).show();
                     } else {
                         relativeLayout.setVisibility(View.VISIBLE);
                         progress.setVisibility(View.GONE);
-                        Toast.makeText(context, "Usuario", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.wrong_user), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     relativeLayout.setVisibility(View.VISIBLE);
-                    System.out.println("something");
+                    Toast.makeText(context, context.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Login> call, Throwable t) {
                 if (t instanceof SocketTimeoutException) {
-                    Toast.makeText(context, "Time out bitch", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.time_out), Toast.LENGTH_SHORT).show();
                     relativeLayout.setVisibility(View.VISIBLE);
-                    t.printStackTrace();
                 } else {
                     relativeLayout.setVisibility(View.VISIBLE);
-                    Toast.makeText(context, "Something weird happend", Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
+                    Toast.makeText(context, context.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -117,8 +115,8 @@ public class ClientRequest {
 
 
     private static void startAct(Activity activity, boolean bool) {
-        activity.startActivity(new Intent(activity, bool?MainActivity.class:ChangePasswordActivity.class));
-        if(bool)
+        activity.startActivity(new Intent(activity, bool ? MainActivity.class : ChangePasswordActivity.class));
+        if (bool)
             activity.finish();
     }
 
@@ -129,7 +127,7 @@ public class ClientRequest {
 
 
     public static void fetchAllNews(Context context, NewsViewModel viewModel, String token, SwipeRefreshLayout... refreshLayout) {
-        Call<List<New>> news = getClient(new Gson()).getNews("Beared " + token);
+        Call<List<New>> news = getClient(new Gson()).getNews("Bearer " + token);
         news.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
@@ -142,7 +140,7 @@ public class ClientRequest {
                     viewModel.delete();
                     setListNewEntity(response.body(), viewModel);
                     getUserInfo(token, context, viewModel);
-                    Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.fetching_data), Toast.LENGTH_SHORT).show();
                 } else if (code == 401) {
                     SharedPreferencesUtils.deleteSharePreferences(context);
                     startLogin((Activity) context);
@@ -170,34 +168,40 @@ public class ClientRequest {
     }
 
 
-    public static void getCategories(String token, CategoryViewModel viewModel) {
+    public static void getCategories(String token, CategoryViewModel viewModel, Context context) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(ArrayList.class, new CategoriesDeserializer())
                 .create();
-        Call<List<String>> categories = getClient(gson).getCategories("Beared " + token);
+        Call<List<String>> categories = getClient(gson).getCategories("Bearer " + token);
         categories.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                if (response.body() != null) {
-                    for (String x : response.body()) {
-                        viewModel.insertCategory(new CategoryEntity(x));
+                if (response.code() == 200) {
+                    if (response.body() != null) {
+                        for (String x : response.body()) {
+                            viewModel.insertCategory(new CategoryEntity(x));
+                        }
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
-
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(context, context.getString(R.string.time_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
 
-    public static void getPlayers(String token, PlayerViewModel viewModel, SwipeRefreshLayout... refresh) {
+    public static void getPlayers(String token, PlayerViewModel viewModel, Context context, SwipeRefreshLayout... refresh) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Player.class, new PlayerDeserializer())
                 .create();
-        Call<List<Player>> players = getClient(gson).getPlayers("Beared " + token);
+        Call<List<Player>> players = getClient(gson).getPlayers("Bearer " + token);
         players.enqueue(new Callback<List<Player>>() {
             @Override
             public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
@@ -212,12 +216,20 @@ public class ClientRequest {
                             refresh[0].setRefreshing(false);
                         }
                     }
+                } else if (response.code() == 401) {
+                    Toast.makeText(context, context.getString(R.string.session_expired), Toast.LENGTH_SHORT).show();
+                    context.startActivity(new Intent(context, LoginActivity.class));
+                    ((Activity) context).finish();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Player>> call, Throwable t) {
-                t.printStackTrace();
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(context, context.getString(R.string.time_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -227,13 +239,12 @@ public class ClientRequest {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(User.class, new UserDeserializer())
                 .create();
-        Call<User> userInfo = getClient(gson).getUserInfo("Beared " + token);
+        Call<User> userInfo = getClient(gson).getUserInfo("Bearer " + token);
         userInfo.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     SharedPreferencesUtils.saveUserID(response.body().getId(), context);
-                    System.out.println(response.body().getFavNews().size());
                     for (String x : response.body().getFavNews()) {
                         repository.update(1, x, token);
                     }
@@ -244,13 +255,17 @@ public class ClientRequest {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                t.printStackTrace();
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(context, context.getString(R.string.time_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
 
-    public static void pushFav(String token, String newID) {
+    public static void pushFav(String token, String newID, Context... context) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(String.class, new PushFavDeserializer())
                 .create();
@@ -258,22 +273,26 @@ public class ClientRequest {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println(response.code() + " push");
-                if (response.code() == 200) {
-                    if (response.body().matches("true")) {
-                        System.out.println("se hizo");
+                if (context.length > 0) {
+                    if (response.code() == 401) {
+                        Toast.makeText(context[0], context[0].getString(R.string.session_expired), Toast.LENGTH_LONG).show();
+                        context[0].startActivity(new Intent(context[0], LoginActivity.class));
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                t.printStackTrace();
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(context[0], context[0].getString(R.string.time_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context[0], context[0].getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    public static void deleteFav(String token, String newID) {
+    public static void deleteFav(String token, String newID, Context... context) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(String.class, new DeleteFavDeserializer())
                 .create();
@@ -281,35 +300,47 @@ public class ClientRequest {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println(response.code());
-                System.out.println(response.body());
+                if (context.length > 0) {
+                    if (response.code() == 401) {
+                        Toast.makeText(context[0], context[0].getString(R.string.session_expired), Toast.LENGTH_LONG).show();
+                        context[0].startActivity(new Intent(context[0], LoginActivity.class));
+                    }
+                }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                t.printStackTrace();
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(context[0], context[0].getString(R.string.time_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context[0], context[0].getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    public static void updateUser(String token, String idUser, String newPassword, Activity activity){
-        Call<Void> call=getClient(new Gson()).updateUser("Bearer "+token, idUser, newPassword);
+    public static void updateUser(String token, String idUser, String newPassword, Activity activity) {
+        Call<Void> call = getClient(new Gson()).updateUser("Bearer " + token, idUser, newPassword);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.code()==200){
+                if (response.code() == 200) {
                     SharedPreferencesUtils.deleteSharePreferences(activity);
-                    Toast.makeText(activity, "Succed! Must login again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(R.string.success_new_password), Toast.LENGTH_SHORT).show();
                     activity.startActivity(new Intent(activity, LoginActivity.class));
                     activity.finish();
-                }else{
-                    System.out.println("something happend");
+                } else {
+                    Toast.makeText(activity, activity.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                t.printStackTrace();
+                if (t instanceof SocketTimeoutException) {
+                    Toast.makeText(activity, activity.getString(R.string.time_out), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, activity.getString(R.string.something_bad), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

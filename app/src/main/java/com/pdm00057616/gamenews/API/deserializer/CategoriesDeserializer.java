@@ -10,12 +10,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoriesDeserializer implements JsonDeserializer<List<String>>{
+public class CategoriesDeserializer implements JsonDeserializer<List<String>> {
     @Override
     public List<String> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        List<String> categories=new ArrayList<>();
-        JsonArray array=json.getAsJsonArray();
-        for(JsonElement x:array){
+        List<String> categories = new ArrayList<>();
+        JsonArray array = json.getAsJsonArray();
+        for (JsonElement x : array) {
             categories.add(x.getAsString());
         }
         return categories;

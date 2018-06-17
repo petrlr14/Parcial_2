@@ -31,13 +31,13 @@ public class LoginActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.edit_text_password);
         button = findViewById(R.id.login_button);
         relativeLayout = findViewById(R.id.relative_progress);
-        progressBar=findViewById(R.id.login_progress);
+        progressBar = findViewById(R.id.login_progress);
         button.setOnClickListener(v -> buttonAction());
     }
 
     private void buttonAction() {
         if (editTextUser.getText().toString().equals("") || editTextPassword.getText().toString().equals("")) {
-            Toast.makeText(this, "Fields Must not be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.empty_fields_warning), Toast.LENGTH_SHORT).show();
             return;
         }
         ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), this, relativeLayout, progressBar, true);

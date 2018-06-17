@@ -58,7 +58,7 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
             super(itemView);
             imageView = itemView.findViewById(R.id.player_image);
             textViewName = itemView.findViewById(R.id.player_name);
-            textViewBio=itemView.findViewById(R.id.bio);
+            textViewBio = itemView.findViewById(R.id.bio);
         }
     }
 }

@@ -9,15 +9,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameViewPagerAdapter extends FragmentPagerAdapter{
+public class GameViewPagerAdapter extends FragmentPagerAdapter {
 
     private List<String> titleList;
     private List<Fragment> fragmentList;
 
     public GameViewPagerAdapter(FragmentManager fm) {
         super(fm);
-        titleList=new ArrayList<>();
-        fragmentList=new ArrayList<>();
+        titleList = new ArrayList<>();
+        fragmentList = new ArrayList<>();
     }
 
     @Override
@@ -29,6 +29,7 @@ public class GameViewPagerAdapter extends FragmentPagerAdapter{
     public int getCount() {
         return fragmentList.size();
     }
+
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
@@ -40,7 +41,7 @@ public class GameViewPagerAdapter extends FragmentPagerAdapter{
         return POSITION_NONE;
     }
 
-    public void addFragment(Fragment fragment, String title){
+    public void addFragment(Fragment fragment, String title) {
         fragmentList.add(fragment);
         titleList.add(title);
     }
