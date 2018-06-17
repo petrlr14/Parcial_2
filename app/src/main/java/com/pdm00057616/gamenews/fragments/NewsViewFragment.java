@@ -70,13 +70,13 @@ public class NewsViewFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = getContext();
         token = SharedPreferencesUtils.getToken(context);
         setHasOptionsMenu(true);
         fragmentType = getArguments().getInt("fragmentType");
         if (getArguments().getString("category") != null) {
             category = getArguments().getString("category");
         }
-        context = getContext();
     }
 
     @Override

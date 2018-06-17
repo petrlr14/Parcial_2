@@ -29,6 +29,8 @@ import com.pdm00057616.gamenews.viewmodels.PlayerViewModel;
 
 import java.util.List;
 
+import static java.lang.Boolean.getBoolean;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int IDG = 1234567898;
@@ -39,10 +41,16 @@ public class MainActivity extends AppCompatActivity {
     private CategoryViewModel categoryViewModel;
     private PlayerViewModel playerViewModel;
     private NewsViewModel newsViewModel;
+    private boolean isFirstEntry=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null){
+            if(savedInstanceState.containsKey("first")){
+                isFirstEntry=getBoolean("first");
+            }
+        }
         bindAll();
     }
 
@@ -54,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("first", false);
     }
 
     private void bindViews() {
@@ -132,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean isLogged() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(getString(R.string.shared_preferences_file_name), MODE_PRIVATE);
-        if (!sharedPreferences.contains(getString(R.string.token))) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("log", MODE_PRIVATE);
+        if (!sharedPreferences.contains("token")) {
             return false;
         } else {
             return true;
@@ -160,12 +174,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setFirstView() {
-        navigationView.getMenu().getItem(0).setChecked(true);
-        Fragment fragment = NewsViewFragment.newInstance(0);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame_content, fragment)
-                .commit();
-        getSupportActionBar().setTitle(navigationView.getMenu().getItem(0).getTitle());
+        if (isFirstEntry) {
+            navigationView.setCheckedItem(R.id.all_news);
+            navigationView.getMenu().performIdentifierAction(R.id.all_news,0);
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -184,8 +196,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firstFetch() {
-        ClientRequest.fetchAllNews(this, newsViewModel, getToken());
-        ClientRequest.getCategories(getToken(), categoryViewModel, this);
-        ClientRequest.getPlayers(getToken(), playerViewModel, this);
+        if (isFirstEntry) {
+            ClientRequest.fetchAllNews(this, newsViewModel, getToken());
+            ClientRequest.getCategories(getToken(), categoryViewModel, this);
+            ClientRequest.getPlayers(getToken(), playerViewModel, this);
+        }
     }
 }

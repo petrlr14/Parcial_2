@@ -52,6 +52,8 @@
     <string name="session_expired">Session expired</string>
     <string name="success_new_password">Success! you must login again</string>
     <string name="bearer">Bearer</string>
+    <string name="change_btn">CHANGE PASSWORD</string>
+    <string name="confirm_your_entity_label">Confirm your entity</string>
 
 
 </resources>

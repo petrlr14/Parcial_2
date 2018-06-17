@@ -46,13 +46,13 @@ public class ConfirmationFragment extends Fragment {
         button = view.findViewById(R.id.login_button);
         relativeLayout = view.findViewById(R.id.relative_progress);
         progressBar = view.findViewById(R.id.login_progress);
-        button.setText("CHANGE PASSWORD");
+        button.setText(R.string.change_btn);
         button.setOnClickListener(v -> buttonAction());
     }
 
     private void buttonAction() {
         if (editTextUser.getText().toString().equals("") || editTextPassword.getText().toString().equals("")) {
-            Toast.makeText(context, "Fields Must not be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.empty_fields_warning, Toast.LENGTH_SHORT).show();
             return;
         }
         ClientRequest.login(editTextUser.getText().toString(), editTextPassword.getText().toString(), (Activity) context, relativeLayout, progressBar, false);

@@ -41,13 +41,15 @@ public class DetailsActivity extends AppCompatActivity {
         imageView=findViewById(R.id.news_image);
         collapsingToolbarLayout=findViewById(R.id.collapsing_toolbar);
         toolbar=findViewById(R.id.toolbar);
+        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(getResources().getColor(R.color.white));
     }
 
     private void getInfo(Bundle bundle){
-        title=bundle.getString("titulo");
-        descipcion=bundle.getString("descripcion");
-        contenido=bundle.getString("contenido");
-        image=bundle.getString("image");
+        title=bundle.getString(getString(R.string.title));
+        descipcion=bundle.getString(getString(R.string.description));
+        contenido=bundle.getString(getString(R.string.content));
+        image=bundle.getString(getString(R.string.image));
     }
 
     private void setInfo(){
