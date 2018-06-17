@@ -41,7 +41,8 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     }
 
     private void bindView(PlayerEntity player, ViewHolder holder) {
-        holder.textView.setText(player.getName());
+        holder.textViewName.setText(player.getName());
+        holder.textViewBio.setText(player.getBio());
         if (player.getAvatar() != null)
             Picasso.get().load(player.getAvatar()).error(R.drawable.error_loading).into(holder.imageView);
         else
@@ -51,12 +52,13 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageView;
-        private TextView textView;
+        private TextView textViewName, textViewBio;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.player_image);
-            textView = itemView.findViewById(R.id.player_name);
+            textViewName = itemView.findViewById(R.id.player_name);
+            textViewBio=itemView.findViewById(R.id.bio);
         }
     }
 }

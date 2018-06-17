@@ -292,13 +292,16 @@ public class ClientRequest {
         });
     }
 
-    public static void updateUser(String token, String idUser, String newPassword){
+    public static void updateUser(String token, String idUser, String newPassword, Activity activity){
         Call<Void> call=getClient(new Gson()).updateUser("Bearer "+token, idUser, newPassword);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.code()==200){
-                    System.out.println("Se hizo");
+                    SharedPreferencesUtils.deleteSharePreferences(activity);
+                    Toast.makeText(activity, "Succed! Must login again", Toast.LENGTH_SHORT).show();
+                    activity.startActivity(new Intent(activity, LoginActivity.class));
+                    activity.finish();
                 }else{
                     System.out.println("something happend");
                 }

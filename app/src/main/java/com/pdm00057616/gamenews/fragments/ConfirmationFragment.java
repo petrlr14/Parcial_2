@@ -26,7 +26,6 @@ public class ConfirmationFragment extends Fragment{
     private RelativeLayout relativeLayout;
     private ProgressBar progressBar;
     private Context context;
-    private TextView singIn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +47,6 @@ public class ConfirmationFragment extends Fragment{
         button = view.findViewById(R.id.login_button);
         relativeLayout = view.findViewById(R.id.relative_progress);
         progressBar=view.findViewById(R.id.login_progress);
-        singIn=view.findViewById(R.id.sign_in);
-        singIn.setVisibility(View.GONE);
         button.setText("CHANGE PASSWORD");
         button.setOnClickListener(v->buttonAction());
     }

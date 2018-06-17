@@ -2,12 +2,12 @@ package com.pdm00057616.gamenews.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pdm00057616.gamenews.API.ClientRequest;
@@ -18,6 +18,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     Button button;
     TextInputEditText newPassword, confirmPassword;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +27,25 @@ public class ChangePasswordActivity extends AppCompatActivity {
         bindViews();
     }
 
-    private void bindViews(){
-        newPassword=findViewById(R.id.new_password);
-        confirmPassword=findViewById(R.id.confirm_password);
-        button=findViewById(R.id.change_pass);
-        button.setOnClickListener(v->onClickList());
+    private void bindViews() {
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Change your password");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        newPassword = findViewById(R.id.new_password);
+        confirmPassword = findViewById(R.id.confirm_password);
+        button = findViewById(R.id.change_pass);
+        button.setOnClickListener(v -> onClickList());
     }
 
-    private void onClickList(){
-        if(newPassword.getText().toString().equals("")&&confirmPassword.getText().toString().equals("")){
+    private void onClickList() {
+        if (newPassword.getText().toString().equals("") && confirmPassword.getText().toString().equals("")) {
             Toast.makeText(this, "Fields must not be empty", Toast.LENGTH_SHORT).show();
-        }else{
-            ClientRequest.updateUser(getToken(), SharedPreferencesUtils.getUserID(this), newPassword.getText().toString());
+        } else if (newPassword.getText().toString().equals(confirmPassword.getText().toString())) {
+            ClientRequest.updateUser(getToken(), SharedPreferencesUtils.getUserID(this), newPassword.getText().toString(), this);
+        } else {
+            Toast.makeText(this, "Passwords must conicide", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -47,5 +55,15 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return preferences.getString("token", "");
         }
         return "";
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return true;
     }
 }
